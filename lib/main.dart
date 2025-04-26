@@ -87,7 +87,7 @@ class MyApp extends StatelessWidget {
       
       themeMode: themeMode,
       debugShowCheckedModeBanner: false,
-      home: const QRScannerScreen(),
+      home: const MainScreen(),
     );
   }
 }
