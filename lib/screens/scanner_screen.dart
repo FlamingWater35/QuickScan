@@ -9,10 +9,10 @@ class QRScannerScreen extends StatefulWidget {
   const QRScannerScreen({super.key});
 
   @override
-  State<QRScannerScreen> createState() => _QRScannerScreenState();
+  State<QRScannerScreen> createState() => QRScannerScreenState();
 }
 
-class _QRScannerScreenState extends State<QRScannerScreen> with WidgetsBindingObserver {
+class QRScannerScreenState extends State<QRScannerScreen> with WidgetsBindingObserver {
   final _log = Logger('CameraScannerScreenState');
   final MobileScannerController controller = MobileScannerController(
     // formats: [BarcodeFormat.qrCode], // Limit to QR codes
@@ -21,16 +21,37 @@ class _QRScannerScreenState extends State<QRScannerScreen> with WidgetsBindingOb
 
   StreamSubscription<Object?>? _subscription;
   bool _isNavigating = false;
+  bool _isCameraExplicitlyStopped = false;
 
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addObserver(this);
-    _listenForBarcodes();
+  }
+
+  Future<void> startCamera() async {
+    _isCameraExplicitlyStopped = false;
+    if (controller.value.isRunning || !mounted) return;
+    _log.fine("QRScannerScreen: Received startCamera command");
+    await _resumeScanner();
+  }
+
+  Future<void> stopCamera() async {
+    _isCameraExplicitlyStopped = true;
+    if (!controller.value.isRunning || !mounted) return;
+    _log.fine("QRScannerScreen: Received stopCamera command");
+    await _pauseScanner();
   }
 
   void _listenForBarcodes() {
+    if (!mounted || !controller.value.isInitialized || !controller.value.isRunning) {
+      _log.severe("QRScannerScreen: Conditions not met to listen for barcodes.");
+      return;
+    }
     _subscription?.cancel();
+    _subscription = null;
+
+    _log.fine("QRScannerScreen: Starting to listen for barcodes.");
     _subscription = controller.barcodes.listen(_handleBarcode);
   }
 
@@ -77,33 +98,8 @@ class _QRScannerScreenState extends State<QRScannerScreen> with WidgetsBindingOb
             _isNavigating = false;
           });
           await Future.delayed(const Duration(milliseconds: 100));
-
-          if(mounted){
-            _listenForBarcodes();
-            if (!controller.value.isRunning && controller.value.isInitialized) {
-              try {
-                await controller.start();
-              } catch (e) {
-                _log.severe("Error restarting scanner: $e");
-                if(mounted){
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text('Error restarting camera: $e')),
-                  );
-                }
-              }
-            } else if (!controller.value.isInitialized && mounted) {
-              try {
-                await controller.start();
-                _listenForBarcodes();
-              } catch(e) {
-                _log.severe("Error starting scanner initially: $e");
-                if (mounted) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text('Error starting camera: $e')),
-                  );
-                }
-              }
-            }
+          if (mounted && !_isCameraExplicitlyStopped) {
+            await _resumeScanner();
           }
         } else {
           _isNavigating = false;
@@ -122,10 +118,12 @@ class _QRScannerScreenState extends State<QRScannerScreen> with WidgetsBindingOb
       return;
     }
 
-    if (!controller.value.isInitialized) {
-      if (state == AppLifecycleState.resumed) {
-        _tryStartScanner();
-      }
+    if (_isCameraExplicitlyStopped && state == AppLifecycleState.resumed) {
+      _log.fine("QRScannerScreen: App resumed but camera explicitly stopped, not restarting.");
+      return;
+    }
+
+    if (!controller.value.isInitialized && state != AppLifecycleState.resumed) {
       return;
     }
 
@@ -133,22 +131,21 @@ class _QRScannerScreenState extends State<QRScannerScreen> with WidgetsBindingOb
       case AppLifecycleState.detached:
       case AppLifecycleState.hidden:
       case AppLifecycleState.paused:
+      case AppLifecycleState.inactive:
         _pauseScanner();
         break;
       case AppLifecycleState.resumed:
         _resumeScanner();
         break;
-      case AppLifecycleState.inactive:
-        _pauseScanner();
-        break;
     }
   }
 
   Future<void> _tryStartScanner() async {
-    if (!mounted) return;
+    if (!mounted || controller.value.isRunning) return;
     try {
-      if (!controller.value.isRunning) {
-        await controller.start();
+      await controller.start();
+      if (mounted) {
+        _log.fine("QRScannerScreen: Scanner started successfully, listening for barcodes.");
         _listenForBarcodes();
       }
     } catch (e) {
@@ -174,32 +171,44 @@ class _QRScannerScreenState extends State<QRScannerScreen> with WidgetsBindingOb
   }
 
   Future<void> _resumeScanner() async {
-    if (mounted) {
-      _listenForBarcodes();
-      if (!controller.value.isRunning && controller.value.isInitialized) {
-        try {
-          await controller.start();
-        } catch (e) {
-          _log.severe("Error restarting scanner: $e");
-            if (mounted) {
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(content: Text('Error restarting camera: $e')),
-              );
-            }
+    if (!mounted || _isNavigating) return;
+    _log.fine("QRScannerScreen: Resuming scanner...");
+    if (_isCameraExplicitlyStopped) {
+      _log.severe("QRScannerScreen: Resume requested but camera is explicitly stopped.");
+      return;
+    }
+
+    if (!controller.value.isInitialized) {
+      _log.fine("QRScannerScreen: Controller not initialized, attempting initial start.");
+      await _tryStartScanner();
+    } else if (!controller.value.isRunning) {
+      _log.fine("QRScannerScreen: Controller initialized but not running, restarting.");
+      try {
+        await controller.start();
+        if(mounted) {
+          _listenForBarcodes();
         }
-      } else if (!controller.value.isInitialized) {
-        await _tryStartScanner();
+      } catch (e) {
+        _log.severe("Error restarting scanner: $e");
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('Error restarting camera: $e')),
+          );
+        }
       }
+    } else {
+      _log.fine("QRScannerScreen: Scanner already running, ensuring listener is active.");
+      _listenForBarcodes();
     }
   }
 
   @override
   Future<void> dispose() async {
     WidgetsBinding.instance.removeObserver(this);
-    unawaited(_subscription?.cancel());
+    await _subscription?.cancel();
     _subscription = null;
-    super.dispose();
     await controller.dispose();
+    super.dispose();
   }
 
   @override
