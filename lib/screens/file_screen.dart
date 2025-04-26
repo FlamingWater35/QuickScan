@@ -19,7 +19,8 @@ class _FileScreenState extends State<FileScreen> {
     // formats: [BarcodeFormat.qrCode],
   );
   final ImagePicker _picker = ImagePicker();
-  bool _isScanning = false;
+  bool _isLoading = false;
+  String _loadingMessage = "";
 
   @override
   void dispose() {
@@ -28,7 +29,13 @@ class _FileScreenState extends State<FileScreen> {
   }
 
   Future<void> _pickAndScanImage() async {
-    if (_isScanning) return;
+    if (_isLoading) return;
+
+    if (!mounted) return;
+    setState(() {
+      _isLoading = true;
+      _loadingMessage = "Choose an image...";
+    });
 
     try {
       final XFile? pickedFile = await _picker.pickImage(
@@ -36,15 +43,24 @@ class _FileScreenState extends State<FileScreen> {
       );
 
       if (pickedFile == null) {
+        if (mounted) {
+          setState(() { _isLoading = false; });
+        }
         return;
       }
 
       if (!mounted) return;
 
       setState(() {
-        _isScanning = true;
+        _loadingMessage = "Processing...";
       });
+      await Future.delayed(const Duration(milliseconds: 300));
 
+      if (!mounted) return;
+
+      setState(() {
+        _loadingMessage = "Scanning image...";
+      });
       final BarcodeCapture? capture = await _scannerController.analyzeImage(pickedFile.path);
 
       if (!mounted) return;
@@ -74,7 +90,8 @@ class _FileScreenState extends State<FileScreen> {
     } finally {
       if (mounted) {
         setState(() {
-          _isScanning = false;
+          _isLoading = false;
+          _loadingMessage = "";
         });
       }
     }
@@ -94,33 +111,49 @@ class _FileScreenState extends State<FileScreen> {
         title: const Text('Scan from File'),
       ),
       body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            if (_isScanning)
-              const Padding(
-                padding: EdgeInsets.only(bottom: 20.0),
-                child: CircularProgressIndicator(),
-              ),
-            ElevatedButton.icon(
-              icon: const Icon(Icons.image_search),
-              label: const Text('Pick Image & Scan'),
-              onPressed: _isScanning ? null : _pickAndScanImage,
-              style: ElevatedButton.styleFrom(
-                padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 15),
-                textStyle: const TextStyle(fontSize: 16)
-              ),
-            ),
-            const SizedBox(height: 20),
-            const Padding(
-              padding: EdgeInsets.symmetric(horizontal: 40.0),
-              child: Text(
-                'Select an image containing a QR code.',
-                textAlign: TextAlign.center,
-                style: TextStyle(color: Colors.grey),
-              ),
-            ),
-          ],
+        child: Padding(
+          padding: const EdgeInsets.all(20.0),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              if (_isLoading)
+                Column(
+                  children: [
+                    const CircularProgressIndicator(),
+                    const SizedBox(height: 15),
+                    Text(
+                      _loadingMessage,
+                      style: Theme.of(context).textTheme.bodyMedium,
+                      textAlign: TextAlign.center,
+                    ),
+                    const SizedBox(height: 30),
+                  ],
+                )
+              else
+                Column(
+                  children: [
+                    ElevatedButton.icon(
+                      icon: const Icon(Icons.image_search),
+                      label: const Text('Pick Image & Scan'),
+                      onPressed: _isLoading ? null : _pickAndScanImage,
+                      style: ElevatedButton.styleFrom(
+                        padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 15),
+                        textStyle: const TextStyle(fontSize: 16)
+                      ),
+                    ),
+                    const SizedBox(height: 20),
+                    const Padding(
+                      padding: EdgeInsets.symmetric(horizontal: 20.0),
+                      child: Text(
+                        'Select an image containing a QR code from your gallery.',
+                        textAlign: TextAlign.center,
+                        style: TextStyle(color: Colors.grey),
+                      ),
+                    ),
+                  ],
+                ),
+            ],
+          ),
         ),
       ),
     );
