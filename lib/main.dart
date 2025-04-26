@@ -1,12 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:logging/logging.dart';
 
 import 'main_screen.dart';
+import 'providers/providers.dart';
 
 void main() {
-  // WidgetsFlutterBinding.ensureInitialized(); // Might not be needed, added for theme mode saving
+  WidgetsFlutterBinding.ensureInitialized(); // Might not be needed, added for theme mode saving
   _setupLogging();
-  runApp(const MyApp());
+  runApp(const ProviderScope(child: MyApp()));
 }
 
 void _setupLogging() {
@@ -22,14 +24,14 @@ void _setupLogging() {
   });
 }
 
-class MyApp extends StatelessWidget {
+class MyApp extends ConsumerWidget {
   const MyApp({super.key});
   static final _log = Logger('MyApp');
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     MyApp._log.info("Building MyApp widget");
-    final themeMode = ThemeMode.system;
+    final themeMode = ref.watch(themeProvider);
     const seedColor = Colors.blueAccent;
 
     // Predictive back transitions for Android
