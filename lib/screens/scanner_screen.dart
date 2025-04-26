@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
 import 'package:logging/logging.dart';
+
 import 'scan_result_screen.dart';
 
 class QRScannerScreen extends StatefulWidget {
@@ -12,12 +13,10 @@ class QRScannerScreen extends StatefulWidget {
 }
 
 class _QRScannerScreenState extends State<QRScannerScreen> with WidgetsBindingObserver {
-  final _log = Logger('QRScannerScreenState');
+  final _log = Logger('CameraScannerScreenState');
   final MobileScannerController controller = MobileScannerController(
     // formats: [BarcodeFormat.qrCode], // Limit to QR codes
     // detectionSpeed: DetectionSpeed.normal, // Adjust speed
-    // facing: CameraFacing.back, // Default is back
-    // torchEnabled: false, // Default is false
   );
 
   StreamSubscription<Object?>? _subscription;
