@@ -4,6 +4,7 @@ import 'package:package_info_plus/package_info_plus.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../providers/providers.dart';
+import 'update_screen.dart';
 
 class SettingsScreen extends ConsumerStatefulWidget {
   const SettingsScreen({super.key});
@@ -15,6 +16,7 @@ class SettingsScreen extends ConsumerStatefulWidget {
 class _SettingsScreenState extends ConsumerState<SettingsScreen> {
   final _log = Logger('SettingsScreen');
   String _appVersion = 'Loading...';
+  final String _updateHeroTag = 'update-hero-tag';
 
   @override
   void initState() {
@@ -40,6 +42,16 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
         });
       }
     }
+  }
+
+  void _handleCheckForUpdates() {
+    _log.info("Check for Updates button tapped - Navigating");
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => UpdateScreen(heroTag: _updateHeroTag),
+      ),
+    );
   }
 
   @override
@@ -100,6 +112,23 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                   ),
                 ),
                 const Divider(indent: 16, endIndent: 16, height: 24),
+
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+                  child: Text('Application', style: theme.textTheme.titleSmall),
+                ),
+                Hero(
+                  tag: _updateHeroTag,
+                  child: Material(
+                    type: MaterialType.transparency,
+                    child: ListTile(
+                      leading: const Icon(Icons.system_update_alt_outlined),
+                      title: const Text('Check for Updates'),
+                      onTap: _handleCheckForUpdates,
+                      contentPadding: const EdgeInsets.symmetric(horizontal: 16.0),
+                    ),
+                  ),
+                ),
               ],
             ),
           ),
