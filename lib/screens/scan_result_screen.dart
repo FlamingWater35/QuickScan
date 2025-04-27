@@ -41,8 +41,35 @@ class _ResultScreenState extends State<ResultScreen> {
       case BarcodeType.phone:
         _launchableUri = Uri.tryParse(widget.code);
         break;
-      case BarcodeType.email:
       case BarcodeType.sms:
+        _launchableUri = Uri.tryParse(widget.code);
+        if (_launchableUri != null) {
+          String? smsNumber;
+          String? smsBody;
+
+          if (_launchableUri!.scheme == 'sms') {
+            smsNumber = _launchableUri!.path;
+            smsBody = _launchableUri!.queryParameters['body'];
+
+          } else if (_launchableUri!.scheme == 'smsto') {
+            final pathParts = _launchableUri!.path.split(':');
+            if (pathParts.isNotEmpty) {
+              smsNumber = pathParts[0];
+            }
+            if (pathParts.length > 1) {
+              smsBody = pathParts.sublist(1).join(':');
+            }
+          }
+
+          if (smsNumber != null && smsNumber.isNotEmpty) {
+            _parsedUriParams['to'] = smsNumber;
+          }
+          if (smsBody != null && smsBody.isNotEmpty) {
+            _parsedUriParams['body'] = smsBody;
+          }
+        }
+        break;
+      case BarcodeType.email:
       case BarcodeType.geo:
         _launchableUri = Uri.tryParse(widget.code);
         if (_launchableUri != null) {
@@ -188,11 +215,11 @@ class _ResultScreenState extends State<ResultScreen> {
          break;
 
       case BarcodeType.sms:
-        if (_launchableUri != null) {
+        if (_parsedUriParams['to'] != null) {
           return Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              _buildInfoRow(context, Icons.phone_android, 'To:', _launchableUri!.path),
+              _buildInfoRow(context, Icons.phone_android, 'To:', _parsedUriParams['to']!),
               if (_parsedUriParams['body'] != null)
                 _buildInfoRow(context, Icons.article_outlined, 'Body:', _parsedUriParams['body']!),
             ],
@@ -228,7 +255,7 @@ class _ResultScreenState extends State<ResultScreen> {
           );
         }
         break;
-        
+
       case BarcodeType.url:
       case BarcodeType.text:
       case BarcodeType.isbn:
