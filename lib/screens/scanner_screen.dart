@@ -63,6 +63,7 @@ class QRScannerScreenState extends State<QRScannerScreen> with WidgetsBindingObs
     if (capture.barcodes.isNotEmpty) {
       final Barcode barcode = capture.barcodes.first;
       final String? code = barcode.rawValue;
+      final BarcodeType type = barcode.type;
 
       if (code != null) {
         setState(() {
@@ -89,7 +90,7 @@ class QRScannerScreenState extends State<QRScannerScreen> with WidgetsBindingObs
 
         await Navigator.of(context, rootNavigator: true).push(
           MaterialPageRoute(
-            builder: (context) => ResultScreen(code: code),
+            builder: (context) => ResultScreen(code: code, type: type),
           ),
         );
 

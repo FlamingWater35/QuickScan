@@ -68,12 +68,13 @@ class _FileScreenState extends State<FileScreen> {
       if (capture != null && capture.barcodes.isNotEmpty) {
         final Barcode barcode = capture.barcodes.first;
         final String? code = barcode.rawValue;
+        final BarcodeType type = barcode.type;
 
         if (code != null) {
           _log.fine('Barcode found in image: $code');
           await Navigator.of(context, rootNavigator: true).push(
             MaterialPageRoute(
-              builder: (context) => ResultScreen(code: code),
+              builder: (context) => ResultScreen(code: code, type: type),
             ),
           );
         } else {
