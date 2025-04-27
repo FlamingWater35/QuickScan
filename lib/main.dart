@@ -4,6 +4,7 @@ import 'package:logging/logging.dart';
 
 import 'main_screen.dart';
 import 'providers/providers.dart';
+import 'components/update_service.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized(); // Might not be needed, added for theme mode saving
@@ -33,6 +34,8 @@ class MyApp extends ConsumerWidget {
     MyApp._log.info("Building MyApp widget");
     final themeMode = ref.watch(themeProvider);
     const seedColor = Colors.blueAccent;
+
+    _runUpdateCleanup();
 
     // Predictive back transitions for Android
     // const pageTransitionsTheme = PageTransitionsTheme(
@@ -92,4 +95,9 @@ class MyApp extends ConsumerWidget {
       home: const MainScreen(),
     );
   }
+}
+
+Future<void> _runUpdateCleanup() async {
+  MyApp._log.info("Running update file cleanup check...");
+  await UpdateService.cleanUpUpdateFile();
 }
