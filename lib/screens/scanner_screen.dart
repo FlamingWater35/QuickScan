@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
 import 'package:logging/logging.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 import 'scan_result_screen.dart';
 
@@ -211,7 +212,7 @@ class QRScannerScreenState extends State<QRScannerScreen> with WidgetsBindingObs
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text(message),
-        backgroundColor: Theme.of(context).colorScheme.error,
+        duration: Duration(seconds: 2),
       )
     );
   }
@@ -306,10 +307,19 @@ class QRScannerScreenState extends State<QRScannerScreen> with WidgetsBindingObs
              },
             errorBuilder: (context, error, child) {
               String errorMessage = 'Camera Error';
+              bool isPermissionError = false;
+
               if (error.errorCode == MobileScannerErrorCode.permissionDenied) {
                 errorMessage = 'Camera permission denied.\nPlease grant permission in app settings.';
+                isPermissionError = true;
+                WidgetsBinding.instance.addPostFrameCallback((_) {
+                  if (mounted && !_hasFatalError) setState(() => _hasFatalError = true);
+                });
               } else {
                 errorMessage = 'Error: ${error.errorDetails ?? error.errorCode.toString()}';
+                WidgetsBinding.instance.addPostFrameCallback((_) {
+                  if (mounted && !_hasFatalError) setState(() => _hasFatalError = true);
+                });
               }
                 _log.severe("MobileScanner errorBuilder: ${error.errorCode}");
               
@@ -322,6 +332,16 @@ class QRScannerScreenState extends State<QRScannerScreen> with WidgetsBindingObs
                       const Icon(Icons.error_outline, color: Colors.red, size: 60),
                       const SizedBox(height: 15),
                       Text(errorMessage, textAlign: TextAlign.center, style: const TextStyle(color: Colors.red)),
+                      if (isPermissionError) ...[
+                        const SizedBox(height: 20),
+                        ElevatedButton(
+                          onPressed: () async {
+                            _log.fine("Opening app settings...");
+                            await openAppSettings();
+                          },
+                          child: const Text('Open Settings'),
+                        ),
+                      ]
                     ],
                   ),
                 ),
