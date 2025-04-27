@@ -22,6 +22,8 @@ class _ResultScreenState extends State<ResultScreen> {
   final _log = Logger('ScannerResultsScreenState');
   Uri? _launchableUri;
   Map<String, String>? _wifiCredentials;
+  Map<String, String?> _parsedUriParams = {};
+  bool _isWifiPasswordVisible = false;
 
   @override
   void initState() {
@@ -30,39 +32,29 @@ class _ResultScreenState extends State<ResultScreen> {
   }
 
   void _parseDataBasedOnType() {
+    _launchableUri = null;
+    _wifiCredentials = null;
+    _parsedUriParams = {};
+
     switch (widget.type) {
       case BarcodeType.url:
       case BarcodeType.phone:
+        _launchableUri = Uri.tryParse(widget.code);
+        break;
       case BarcodeType.email:
       case BarcodeType.sms:
+      case BarcodeType.geo:
         _launchableUri = Uri.tryParse(widget.code);
-        if (_launchableUri?.scheme == null ||
-            (_launchableUri!.scheme != 'http' && widget.type == BarcodeType.url) &&
-            (_launchableUri!.scheme != 'https' && widget.type == BarcodeType.url) &&
-             (_launchableUri!.scheme != 'tel' && widget.type == BarcodeType.phone) &&
-             (_launchableUri!.scheme != 'mailto' && widget.type == BarcodeType.email) &&
-             (_launchableUri!.scheme != 'sms' && widget.type == BarcodeType.sms)
-            ) {
-              _launchableUri = null;
-              _log.severe("Warning: Parsed URI scheme doesn't match BarcodeType ${widget.type}");
-            }
+        if (_launchableUri != null) {
+          _parsedUriParams = _launchableUri!.queryParameters;
+        }
         break;
       case BarcodeType.wifi:
         _parseWifiCode(widget.code);
         break;
-      case BarcodeType.contactInfo:
-      case BarcodeType.geo:
-      case BarcodeType.calendarEvent:
-      case BarcodeType.isbn:
-      case BarcodeType.product:
-      case BarcodeType.text:
-      case BarcodeType.driverLicense:
-      case BarcodeType.unknown:
+      default:
         break;
     }
-     if (mounted) {
-        setState(() {});
-     }
   }
 
   void _parseWifiCode(String code) {
@@ -130,6 +122,168 @@ class _ResultScreenState extends State<ResultScreen> {
         content: Text(message),
         duration: const Duration(seconds: 3),
       ),
+    );
+  }
+
+  Widget _buildFormattedContent(BuildContext context) {
+    final theme = Theme.of(context);
+    final textStyle = theme.textTheme.bodyLarge?.copyWith(
+      color: theme.colorScheme.onSurfaceVariant,
+    );
+    final labelStyle = textStyle?.copyWith(fontWeight: FontWeight.bold);
+
+    switch (widget.type) {
+      case BarcodeType.wifi:
+        if (_wifiCredentials != null) {
+          final String password = _wifiCredentials!['P'] ?? '';
+          return Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              _buildInfoRow(context, Icons.wifi, 'SSID:', _wifiCredentials!['S'] ?? 'N/A'),
+              _buildInfoRow(context, Icons.lock_outline, 'Type:', _wifiCredentials!['T'] ?? 'N/A'),
+              Row(
+                children: [
+                  Icon(Icons.password, color: labelStyle?.color?.withAlpha(140), size: 20),
+                  const SizedBox(width: 8),
+                  Text('Password:', style: labelStyle),
+                  const SizedBox(width: 8),
+                  Expanded(
+                    child: SelectableText(
+                      _isWifiPasswordVisible ? password : ('*' * password.length),
+                      style: textStyle,
+                    )
+                  ),
+                  IconButton(
+                    icon: Icon(
+                      _isWifiPasswordVisible ? Icons.visibility_off : Icons.visibility,
+                      color: theme.colorScheme.primary,
+                    ),
+                    tooltip: _isWifiPasswordVisible ? 'Hide password' : 'Show password',
+                    onPressed: password.isNotEmpty ? () {
+                      setState(() { _isWifiPasswordVisible = !_isWifiPasswordVisible; });
+                    } : null,
+                  )
+                ],
+              ),
+              if (_wifiCredentials!['H'] == 'true')
+                _buildInfoRow(context, Icons.visibility_off_outlined, 'Hidden:', 'Yes'),
+            ],
+          );
+        }
+        break;
+
+      case BarcodeType.email:
+        if (_launchableUri != null) {
+          return Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              _buildInfoRow(context, Icons.alternate_email, 'To:', _launchableUri!.path),
+              if (_parsedUriParams['subject'] != null)
+                _buildInfoRow(context, Icons.subject, 'Subject:', _parsedUriParams['subject']!),
+              if (_parsedUriParams['body'] != null)
+                _buildInfoRow(context, Icons.article_outlined, 'Body:', _parsedUriParams['body']!),
+            ],
+          );
+        }
+         break;
+
+      case BarcodeType.sms:
+        if (_launchableUri != null) {
+          return Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              _buildInfoRow(context, Icons.phone_android, 'To:', _launchableUri!.path),
+              if (_parsedUriParams['body'] != null)
+                _buildInfoRow(context, Icons.article_outlined, 'Body:', _parsedUriParams['body']!),
+            ],
+          );
+        }
+        break;
+
+      case BarcodeType.geo:
+        if (_launchableUri != null) {
+          final pathParts = _launchableUri!.path.split(',');
+          final String lat = pathParts.isNotEmpty ? pathParts[0] : 'N/A';
+          final String lon = pathParts.length > 1 ? pathParts[1] : 'N/A';
+          return Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              _buildInfoRow(context, Icons.pin_drop_outlined, 'Latitude:', lat),
+              _buildInfoRow(context, Icons.pin_drop_outlined, 'Longitude:', lon),
+              if (_parsedUriParams['q'] != null)
+                _buildInfoRow(context, Icons.label_outline, 'Label:', _parsedUriParams['q']!),
+            ],
+          );
+        }
+        break;
+
+      case BarcodeType.phone:
+        if (_launchableUri != null) {
+          final pathParts = widget.code.split(':');
+          final String number = pathParts.length > 1 ? pathParts[1] : 'N/A';
+          return SelectableText(
+            number,
+            style: textStyle?.copyWith(fontSize: 18),
+            textAlign: TextAlign.center,
+          );
+        }
+        break;
+        
+      case BarcodeType.url:
+      case BarcodeType.text:
+      case BarcodeType.isbn:
+      case BarcodeType.product:
+        return SelectableText(
+          widget.code,
+          style: textStyle?.copyWith(fontSize: 18),
+          textAlign: TextAlign.center,
+        );
+
+      case BarcodeType.contactInfo:
+        return _buildRawContentWithLabel(context, "Contact Info (vCard):");
+      case BarcodeType.calendarEvent:
+        return _buildRawContentWithLabel(context, "Calendar Event (iCal):");
+      case BarcodeType.driverLicense:
+        return _buildRawContentWithLabel(context, "Driver License Data:");
+      case BarcodeType.unknown:
+        return _buildRawContentWithLabel(context, "Raw Data:"); 
+    }
+
+    return _buildRawContentWithLabel(context, "Raw Data:");
+  }
+
+  Widget _buildInfoRow(BuildContext context, IconData icon, String label, String value) {
+    final theme = Theme.of(context);
+    final textStyle = theme.textTheme.bodyLarge?.copyWith(color: theme.colorScheme.onSurfaceVariant);
+    final labelStyle = textStyle?.copyWith(fontWeight: FontWeight.bold);
+
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 4.0),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Icon(icon, color: labelStyle?.color?.withAlpha(140), size: 20),
+          const SizedBox(width: 8),
+          Text(label, style: labelStyle),
+          const SizedBox(width: 8),
+          Flexible(child: SelectableText(value, style: textStyle)),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildRawContentWithLabel(BuildContext context, String label) {
+    final theme = Theme.of(context);
+    final textStyle = theme.textTheme.bodyMedium?.copyWith(color: theme.colorScheme.onSurfaceVariant);
+    final labelStyle = theme.textTheme.bodySmall?.copyWith(color: theme.colorScheme.onSurfaceVariant.withAlpha(140));
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(label, style: labelStyle),
+        const SizedBox(height: 4),
+        SelectableText(widget.code, style: textStyle),
+      ],
     );
   }
 
@@ -313,13 +467,7 @@ class _ResultScreenState extends State<ResultScreen> {
                     borderRadius: BorderRadius.circular(8.0),
                     border: Border.all(color: colorScheme.outline)
                   ),
-                  child: SelectableText(
-                    widget.code,
-                    style: theme.textTheme.bodyLarge?.copyWith(
-                      color: colorScheme.onSurfaceVariant
-                    ),
-                    textAlign: TextAlign.center,
-                  ),
+                  child: _buildFormattedContent(context),
                 ),
                 const SizedBox(height: 30),
 
