@@ -288,7 +288,7 @@ class _ResultScreenState extends State<ResultScreen> {
             ],
           );
         }
-         break;
+        break;
 
       case BarcodeType.sms:
         if (_parsedUriParams['to'] != null) {
@@ -559,7 +559,6 @@ class _ResultScreenState extends State<ResultScreen> {
       case BarcodeType.unknown:
         break;
     }
-
 
     return Scaffold(
       appBar: AppBar(
