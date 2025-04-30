@@ -1,8 +1,10 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
 import 'package:logging/logging.dart';
+import 'package:file_picker/file_picker.dart';
 
 class ResultScreen extends StatefulWidget {
   final String code;
@@ -41,6 +43,7 @@ class _ResultScreenState extends State<ResultScreen> {
       case BarcodeType.phone:
         _launchableUri = Uri.tryParse(widget.code);
         break;
+      
       case BarcodeType.sms:
         _launchableUri = Uri.tryParse(widget.code);
         if (_launchableUri != null) {
@@ -69,16 +72,42 @@ class _ResultScreenState extends State<ResultScreen> {
           }
         }
         break;
+      
       case BarcodeType.email:
-      case BarcodeType.geo:
         _launchableUri = Uri.tryParse(widget.code);
         if (_launchableUri != null) {
           _parsedUriParams = _launchableUri!.queryParameters;
         }
         break;
+      
+      case BarcodeType.geo:
+        _launchableUri = Uri.tryParse(widget.code);
+        if (_launchableUri?.scheme != 'geo') {
+          if (RegExp(r'^-?\d+(\.\d+)?,-?\d+(\.\d+)?$').hasMatch(widget.code)) {
+            _launchableUri = Uri.tryParse('geo:${widget.code}');
+          } else {
+            _launchableUri = null;
+          }
+        }
+
+        if (_launchableUri != null) {
+          _parsedUriParams = _launchableUri!.queryParameters;
+          final path = _launchableUri!.path;
+          final parts = path.split(',');
+          if (parts.length >= 2) {
+            _parsedUriParams['lat'] = parts[0];
+            _parsedUriParams['lon'] = parts[1];
+            if (parts.length > 2) {
+              _parsedUriParams['alt'] = parts[2];
+            }
+          }
+        }
+        break;
+      
       case BarcodeType.wifi:
         _parseWifiCode(widget.code);
         break;
+      
       default:
         break;
     }
@@ -87,17 +116,29 @@ class _ResultScreenState extends State<ResultScreen> {
   void _parseWifiCode(String code) {
     if (code.startsWith('WIFI:')) {
       final Map<String, String> credentials = {};
-      final String data = code.substring(5).replaceAll(';;', '');
-      final List<String> parts = data.split(';');
+      final String data = code.substring(5);
+      final List<String> parts = data.split(RegExp(r'(?<!\\);'));
 
       for (String part in parts) {
         if (part.isNotEmpty) {
-          final List<String> keyValue = part.split(':');
-          if (keyValue.length >= 2) {
-            final String key = keyValue[0];
-            final String value = keyValue.sublist(1).join(':');
+          final separatorIndex = part.indexOf(RegExp(r'(?<!\\):'));
+          if (separatorIndex != -1) {
+            final key = part.substring(0, separatorIndex);
+            String value = part.substring(separatorIndex + 1);
+            value = value.replaceAll('\\\\', '\\')
+                        .replaceAll('\\;', ';')
+                        .replaceAll('\\:', ':')
+                        .replaceAll('\\"', '"')
+                        .replaceAll('\\,', ',');
             credentials[key] = value;
           }
+        }
+      }
+
+      if (credentials.isNotEmpty) {
+        final lastKey = credentials.keys.last;
+        if(credentials[lastKey]!.endsWith(';')) {
+          credentials[lastKey] = credentials[lastKey]!.substring(0, credentials[lastKey]!.length-1);
         }
       }
 
@@ -140,6 +181,40 @@ class _ResultScreenState extends State<ResultScreen> {
     final String credentialsText = 'Wi-Fi Network:\nSSID: $ssid\nPassword: $password\nSecurity Type: $type';
 
     _copyToClipboard(credentialsText, 'Wi-Fi credentials copied to clipboard!');
+  }
+
+  Future<void> _exportVCard() async {
+    if (widget.type != BarcodeType.contactInfo || widget.code.isEmpty) {
+      _showSnackBar("No vCard data to export.");
+      return;
+    }
+
+    try {
+      final textBytes = utf8.encode(widget.code);
+      final fileBytes = Uint8List.fromList(textBytes);
+
+      final String suggestedFileName = 'contact_${DateTime.now().toIso8601String().split('T')[0]}.vcf';
+
+      String? outputFile = await FilePicker.platform.saveFile(
+        dialogTitle: 'Save Contact',
+        fileName: suggestedFileName,
+        allowedExtensions: ['vcf'],
+        type: FileType.custom,
+        bytes: fileBytes,
+      );
+
+      if (outputFile != null) {
+        _showSnackBar("vCard saved successfully!");
+        _log.info("vCard saved as: $outputFile");
+      } else {
+        _showSnackBar("vCard export cancelled or failed.");
+      }
+    } catch (e) {
+      _log.severe("Error saving vCard: $e");
+      if (mounted) {
+        _showSnackBar("Error exporting vCard: ${e.toString()}");
+      }
+    }
   }
 
   void _showSnackBar(String message) {
@@ -200,11 +275,12 @@ class _ResultScreenState extends State<ResultScreen> {
         break;
 
       case BarcodeType.email:
-        if (_launchableUri != null) {
+        if (_parsedUriParams['to'] != null || _launchableUri?.path.isNotEmpty == true) {
+          final recipient = _parsedUriParams['to'] ?? _launchableUri?.path ?? 'N/A';
           return Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              _buildInfoRow(context, Icons.alternate_email, 'To:', _launchableUri!.path),
+              _buildInfoRow(context, Icons.alternate_email, 'To:', recipient),
               if (_parsedUriParams['subject'] != null)
                 _buildInfoRow(context, Icons.subject, 'Subject:', _parsedUriParams['subject']!),
               if (_parsedUriParams['body'] != null)
@@ -228,26 +304,26 @@ class _ResultScreenState extends State<ResultScreen> {
         break;
 
       case BarcodeType.geo:
-        if (_launchableUri != null) {
-          final pathParts = _launchableUri!.path.split(',');
-          final String lat = pathParts.isNotEmpty ? pathParts[0] : 'N/A';
-          final String lon = pathParts.length > 1 ? pathParts[1] : 'N/A';
-          return Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              _buildInfoRow(context, Icons.pin_drop_outlined, 'Latitude:', lat),
-              _buildInfoRow(context, Icons.pin_drop_outlined, 'Longitude:', lon),
-              if (_parsedUriParams['q'] != null)
-                _buildInfoRow(context, Icons.label_outline, 'Label:', _parsedUriParams['q']!),
-            ],
-          );
-        }
-        break;
+        final String lat = _parsedUriParams['lat'] ?? 'N/A';
+        final String lon = _parsedUriParams['lon'] ?? 'N/A';
+        final String? label = _parsedUriParams['q'];
+        final String? alt = _parsedUriParams['alt'];
+
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            _buildInfoRow(context, Icons.pin_drop_outlined, 'Latitude:', lat),
+            _buildInfoRow(context, Icons.pin_drop_outlined, 'Longitude:', lon),
+            if (alt != null)
+              _buildInfoRow(context, Icons.layers_outlined, 'Altitude:', alt),
+            if (label != null)
+              _buildInfoRow(context, Icons.label_outline, 'Label:', label),
+          ],
+        );
 
       case BarcodeType.phone:
         if (_launchableUri != null) {
-          final pathParts = widget.code.split(':');
-          final String number = pathParts.length > 1 ? pathParts[1] : 'N/A';
+          final String number = _launchableUri!.path.isNotEmpty ? _launchableUri!.path : 'N/A';
           return SelectableText(
             number,
             style: textStyle?.copyWith(fontSize: 18),
@@ -378,7 +454,17 @@ class _ResultScreenState extends State<ResultScreen> {
             onPressed: () => _launchUriAction(_launchableUri!),
             style: ElevatedButton.styleFrom(backgroundColor: Colors.red[600], foregroundColor: Colors.white),
           ));
-         }
+
+          final recipient = _parsedUriParams['to'] ?? _launchableUri?.path ?? '';
+          if (recipient.isNotEmpty) {
+            actionButtons.add(const SizedBox(height: 10));
+            actionButtons.add(ElevatedButton.icon(
+              icon: const Icon(Icons.copy),
+              label: const Text('Copy Email Address'),
+              onPressed: () => _copyToClipboard(recipient, 'Email address copied!'),
+            ));
+          }
+        }
         break;
 
       case BarcodeType.sms:
@@ -420,15 +506,31 @@ class _ResultScreenState extends State<ResultScreen> {
         break;
 
       case BarcodeType.contactInfo:
-        topIcon = Icons.contact_page;
+        topIcon = Icons.contact_page_outlined;
         topIconColor = colorScheme.primary;
         titleText = 'Contact Info Found!';
+        actionButtons.add(ElevatedButton.icon(
+          icon: const Icon(Icons.save_alt),
+          label: const Text('Export vCard (.vcf)'),
+          onPressed: _exportVCard,
+          style: ElevatedButton.styleFrom(backgroundColor: Colors.orange[700], foregroundColor: Colors.white),
+        ));
         break;
+
       case BarcodeType.geo:
-        topIcon = Icons.location_on;
+        topIcon = Icons.location_on_outlined;
         topIconColor = colorScheme.primary;
         titleText = 'Location Found!';
+        if (_launchableUri != null) {
+          actionButtons.add(ElevatedButton.icon(
+            icon: const Icon(Icons.map_outlined),
+            label: const Text('Open in Maps'),
+            onPressed: () => _launchUriAction(_launchableUri!),
+            style: ElevatedButton.styleFrom(backgroundColor: Colors.teal[600], foregroundColor: Colors.white),
+          ));
+        }
         break;
+
       case BarcodeType.calendarEvent:
         topIcon = Icons.event;
         topIconColor = colorScheme.primary;
