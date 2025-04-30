@@ -25,6 +25,7 @@ class _ResultScreenState extends State<ResultScreen> {
   Uri? _launchableUri;
   Map<String, String>? _wifiCredentials;
   Map<String, String?> _parsedUriParams = {};
+  Map<String, List<String>> _parsedVCard = {};
   bool _isWifiPasswordVisible = false;
 
   @override
@@ -37,6 +38,7 @@ class _ResultScreenState extends State<ResultScreen> {
     _launchableUri = null;
     _wifiCredentials = null;
     _parsedUriParams = {};
+    _parsedVCard = {};
 
     switch (widget.type) {
       case BarcodeType.url:
@@ -60,7 +62,7 @@ class _ResultScreenState extends State<ResultScreen> {
               smsNumber = pathParts[0];
             }
             if (pathParts.length > 1) {
-              smsBody = pathParts.sublist(1).join(':');
+              smsBody = Uri.decodeComponent(pathParts.sublist(1).join(':'));
             }
           }
 
@@ -74,9 +76,15 @@ class _ResultScreenState extends State<ResultScreen> {
         break;
       
       case BarcodeType.email:
-        _launchableUri = Uri.tryParse(widget.code);
-        if (_launchableUri != null) {
-          _parsedUriParams = _launchableUri!.queryParameters;
+        if (widget.code.toLowerCase().startsWith('mailto:')) {
+          _launchableUri = Uri.tryParse(widget.code);
+          if (_launchableUri != null) {
+            _parsedUriParams['to'] = _launchableUri!.path;
+            _parsedUriParams.addAll(_launchableUri!.queryParameters);
+          }
+        } else if (widget.code.contains('@')) {
+          _launchableUri = Uri.tryParse('mailto:${widget.code}');
+          _parsedUriParams['to'] = widget.code;
         }
         break;
       
@@ -106,6 +114,10 @@ class _ResultScreenState extends State<ResultScreen> {
       
       case BarcodeType.wifi:
         _parseWifiCode(widget.code);
+        break;
+      
+      case BarcodeType.contactInfo:
+        _parsedVCard = _parseVCardSimple(widget.code);
         break;
       
       default:
@@ -144,8 +156,40 @@ class _ResultScreenState extends State<ResultScreen> {
 
       if (credentials.containsKey('S')) {
         _wifiCredentials = credentials;
+        _wifiCredentials!.putIfAbsent('T', () => 'nopass');
+        _wifiCredentials!.putIfAbsent('P', () => '');
       }
     }
+  }
+
+  Map<String, List<String>> _parseVCardSimple(String vCardString) {
+    final Map<String, List<String>> data = {};
+    final lines = vCardString.split('\n');
+
+    for (var line in lines) {
+      line = line.trim();
+      if (line.isEmpty || line.toUpperCase().startsWith('BEGIN:') || line.toUpperCase().startsWith('END:')) {
+        continue;
+      }
+
+      final colonIndex = line.indexOf(':');
+      if (colonIndex == -1) continue;
+
+      final keyPart = line.substring(0, colonIndex);
+      final value = line.substring(colonIndex + 1).trim();
+
+      final key = keyPart.split(';').first.toUpperCase();
+
+      const knownKeys = {'FN', 'N', 'ORG', 'TITLE', 'TEL', 'EMAIL', 'ADR', 'URL', 'NOTE'};
+      if (knownKeys.contains(key)) {
+        data.update(
+          key,
+          (list) => list..add(value),
+          ifAbsent: () => [value],
+        );
+      }
+    }
+    return data;
   }
 
   Future<void> _launchUriAction(Uri uri) async {
@@ -193,7 +237,19 @@ class _ResultScreenState extends State<ResultScreen> {
       final textBytes = utf8.encode(widget.code);
       final fileBytes = Uint8List.fromList(textBytes);
 
-      final String suggestedFileName = 'contact_${DateTime.now().toIso8601String().split('T')[0]}.vcf';
+      String suggestedFileName = 'contact.vcf';
+      if (_parsedVCard.containsKey('FN') && _parsedVCard['FN']!.isNotEmpty) {
+        suggestedFileName = '${_parsedVCard['FN']!.first.replaceAll(RegExp(r'[^\w\s]+'), '_')}.vcf';
+      } else if (_parsedVCard.containsKey('N') && _parsedVCard['N']!.isNotEmpty) {
+        final nameParts = _parsedVCard['N']!.first.split(';');
+        final firstName = nameParts.length > 1 ? nameParts[1] : '';
+        final lastName = nameParts.isNotEmpty ? nameParts[0] : '';
+        if (firstName.isNotEmpty || lastName.isNotEmpty) {
+          suggestedFileName = '${'${firstName}_$lastName'.replaceAll(RegExp(r'[^\w\s]+'), '_').replaceAll('__', '_').trim()}.vcf';
+        }
+      } else {
+        suggestedFileName = 'contact_${DateTime.now().millisecondsSinceEpoch}.vcf';
+      }
 
       String? outputFile = await FilePicker.platform.saveFile(
         dialogTitle: 'Save Contact',
@@ -205,7 +261,7 @@ class _ResultScreenState extends State<ResultScreen> {
 
       if (outputFile != null) {
         _showSnackBar("vCard saved successfully!");
-        _log.info("vCard saved as: $outputFile");
+        _log.info("vCard saved as a file");
       } else {
         _showSnackBar("vCard export cancelled or failed.");
       }
@@ -225,6 +281,79 @@ class _ResultScreenState extends State<ResultScreen> {
         duration: const Duration(seconds: 3),
       ),
     );
+  }
+
+  Widget _buildVCardContent(BuildContext context) {
+    List<Widget> vCardRows = [];
+
+    String displayName = "N/A";
+    if (_parsedVCard['FN']?.isNotEmpty ?? false) {
+      displayName = _parsedVCard['FN']!.first;
+      vCardRows.add(_buildInfoRow(context, Icons.person_outline, 'Name:', displayName));
+    } else if (_parsedVCard['N']?.isNotEmpty ?? false) {
+      final nameParts = _parsedVCard['N']!.first.split(';');
+      final firstName = nameParts.length > 1 ? nameParts[1] : '';
+      final lastName = nameParts.isNotEmpty ? nameParts[0] : '';
+      displayName = '$firstName $lastName'.trim();
+      if (displayName.isNotEmpty) {
+        vCardRows.add(_buildInfoRow(context, Icons.person_outline, 'Name:', displayName));
+      }
+    }
+
+    if (_parsedVCard['ORG']?.isNotEmpty ?? false) {
+      vCardRows.add(_buildInfoRow(context, Icons.business, 'Organization:', _parsedVCard['ORG']!.first));
+    }
+    if (_parsedVCard['TITLE']?.isNotEmpty ?? false) {
+      vCardRows.add(_buildInfoRow(context, Icons.work_outline, 'Title:', _parsedVCard['TITLE']!.first));
+    }
+
+    if (_parsedVCard['TEL']?.isNotEmpty ?? false) {
+      for (final phone in _parsedVCard['TEL']!) {
+        vCardRows.add(_buildInfoRow(context, Icons.phone_outlined, 'Phone:', phone));
+      }
+    }
+
+    if (_parsedVCard['EMAIL']?.isNotEmpty ?? false) {
+      for (final email in _parsedVCard['EMAIL']!) {
+        vCardRows.add(_buildInfoRow(context, Icons.email_outlined, 'Email:', email));
+      }
+    }
+
+    if (_parsedVCard['ADR']?.isNotEmpty ?? false) {
+      for (final adr in _parsedVCard['ADR']!) {
+        final adrParts = adr.split(';');
+        final displayAdr = [
+          if (adrParts.length > 2 && adrParts[2].isNotEmpty) adrParts[2], // Street
+          if (adrParts.length > 3 && adrParts[3].isNotEmpty) adrParts[3], // City
+          if (adrParts.length > 4 && adrParts[4].isNotEmpty) adrParts[4], // Region
+          if (adrParts.length > 5 && adrParts[5].isNotEmpty) adrParts[5], // Postal Code
+          if (adrParts.length > 6 && adrParts[6].isNotEmpty) adrParts[6], // Country
+        ].where((part) => part.isNotEmpty).join(', ');
+
+        if (displayAdr.isNotEmpty) {
+          vCardRows.add(_buildInfoRow(context, Icons.location_on_outlined, 'Address:', displayAdr));
+        }
+      }
+    }
+
+      if (_parsedVCard['URL']?.isNotEmpty ?? false) {
+        for (final url in _parsedVCard['URL']!) {
+          vCardRows.add(_buildInfoRow(context, Icons.link, 'Website:', url));
+        }
+      }
+
+      if (_parsedVCard['NOTE']?.isNotEmpty ?? false) {
+        vCardRows.add(_buildInfoRow(context, Icons.note_outlined, 'Note:', _parsedVCard['NOTE']!.first));
+      }
+
+      if (vCardRows.isEmpty) {
+        return _buildRawContentWithLabel(context, "Contact Info (vCard):");
+      }
+
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: vCardRows,
+      );
   }
 
   Widget _buildFormattedContent(BuildContext context) {
@@ -251,20 +380,26 @@ class _ResultScreenState extends State<ResultScreen> {
                   const SizedBox(width: 8),
                   Expanded(
                     child: SelectableText(
-                      _isWifiPasswordVisible ? password : ('*' * password.length),
-                      style: textStyle,
+                      password.isEmpty
+                        ? '(none)'
+                        : _isWifiPasswordVisible ? password : ('*' * password.length),
+                      style: textStyle?.copyWith(
+                        fontStyle: password.isEmpty ? FontStyle.italic : FontStyle.normal),
                     )
                   ),
-                  IconButton(
-                    icon: Icon(
-                      _isWifiPasswordVisible ? Icons.visibility_off : Icons.visibility,
-                      color: theme.colorScheme.primary,
-                    ),
-                    tooltip: _isWifiPasswordVisible ? 'Hide password' : 'Show password',
-                    onPressed: password.isNotEmpty ? () {
-                      setState(() { _isWifiPasswordVisible = !_isWifiPasswordVisible; });
-                    } : null,
-                  )
+                  if (password.isNotEmpty)
+                    IconButton(
+                      icon: Icon(
+                        _isWifiPasswordVisible ? Icons.visibility_off : Icons.visibility,
+                        color: theme.colorScheme.primary,
+                      ),
+                      tooltip: _isWifiPasswordVisible ? 'Hide password' : 'Show password',
+                      onPressed: password.isNotEmpty ? () {
+                        setState(() { _isWifiPasswordVisible = !_isWifiPasswordVisible; });
+                      } : null,
+                    )
+                  else
+                    const SizedBox(width: 48),
                 ],
               ),
               if (_wifiCredentials!['H'] == 'true')
@@ -343,7 +478,7 @@ class _ResultScreenState extends State<ResultScreen> {
         );
 
       case BarcodeType.contactInfo:
-        return _buildRawContentWithLabel(context, "Contact Info (vCard):");
+        return _buildVCardContent(context);
       case BarcodeType.calendarEvent:
         return _buildRawContentWithLabel(context, "Calendar Event (iCal):");
       case BarcodeType.driverLicense:
