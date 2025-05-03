@@ -82,6 +82,72 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
     }
   }
 
+  void _showLanguageSelectionSheet(BuildContext context, Locale currentLocale, AppLocalizations l10n, WidgetRef ref) {
+    final supportedLocales = AppLocalizations.supportedLocales;
+    final theme = Theme.of(context);
+
+    showModalBottomSheet(
+      context: context,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20.0)),
+      ),
+      builder: (BuildContext bottomSheetContext) {
+        return Consumer(
+          builder: (context, sheetRef, child) {
+            final currentLocaleInSheet = sheetRef.watch(localeProvider);
+
+            return Padding(
+              padding: const EdgeInsets.symmetric(vertical: 16.0, horizontal: 8.0),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+                    child: Text(
+                      l10n.languageSectionTitle,
+                      style: theme.textTheme.titleLarge?.copyWith(
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                  const Divider(height: 1),
+                  const SizedBox(height: 8),
+                  Flexible(
+                    child: ListView(
+                      shrinkWrap: true,
+                      children: supportedLocales.map((locale) {
+                        final languageName = _getLanguageName(locale, l10n);
+                        return RadioListTile<Locale>(
+                          title: Text(languageName),
+                          value: locale,
+                          groupValue: currentLocaleInSheet,
+                          onChanged: (Locale? newLocale) {
+                            if (newLocale != null) {
+                              _log.info("Language selected in sheet: ${newLocale.languageCode}");
+                              ref
+                                .read(localeProvider.notifier)
+                                .setLocale(newLocale);
+                              Navigator.pop(bottomSheetContext);
+                            }
+                          },
+                          visualDensity: VisualDensity.compact,
+                          controlAffinity: ListTileControlAffinity.trailing,
+                          activeColor: theme.colorScheme.primary,
+                        );
+                      }).toList(),
+                    ),
+                  ),
+                ],
+              ),
+            );
+          }
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     _log.finer("Building SettingsScreen widget");
@@ -89,7 +155,6 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
     final theme = Theme.of(context);
     final currentMode = ref.watch(themeProvider);
     final currentLocale = ref.watch(localeProvider);
-    final supportedLocales = AppLocalizations.supportedLocales;
 
     return Scaffold(
       appBar: AppBar(
@@ -111,28 +176,38 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                 children: <Widget>[
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
-                    child: Text(l10n.languageSectionTitle, style: theme.textTheme.titleSmall),
+                    child: Text(l10n.languageSectionTitle, style: theme.textTheme.titleMedium?.copyWith(color: theme.colorScheme.primary)),
                   ),
                   Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                    child: DropdownButton<Locale>(
-                      value: currentLocale,
-                      isExpanded: true,
-                      items: supportedLocales.map((locale) {
-                        final languageName = _getLanguageName(locale, l10n);
-                        return DropdownMenuItem<Locale>(
-                          value: locale,
-                          child: Text(languageName),
-                        );
-                      }).toList(),
-                      onChanged: (Locale? newLocale) {
-                        if (newLocale != null) {
-                          _log.info("Language changed to: ${newLocale.languageCode}");
-                          ref.read(localeProvider.notifier).setLocale(newLocale);
-                        }
+                    padding: const EdgeInsets.fromLTRB(16.0, 0.0, 16.0, 0.0),
+                    child: ListTile(
+                      leading: Icon(Icons.language_outlined, color: theme.colorScheme.secondary),
+                      title: Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 10.0),
+                        child: Text(l10n.languageSectionTitle)
+                      ),
+                      subtitle: Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 10.0),
+                        child: Text(
+                          _getLanguageName(currentLocale, l10n),
+                          style: TextStyle(color: theme.textTheme.bodySmall?.color?.withAlpha(200)),
+                        ),
+                      ),
+                      trailing: const Icon(Icons.arrow_drop_down),
+                      contentPadding: const EdgeInsets.symmetric(horizontal: 16.0),
+                      onTap: () {
+                        _log.info("Language setting tapped - showing selection sheet");
+                        _showLanguageSelectionSheet(context, currentLocale, l10n, ref);
                       },
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8.0),
+                        side: BorderSide(color: theme.dividerColor, width: 0.5)
+                      ),
+                      horizontalTitleGap: 8.0,
+                      tileColor: theme.colorScheme.surfaceContainerHighest.withAlpha(64),
                     ),
                   ),
+                  const SizedBox(height: 8),
                   const Divider(indent: 16, endIndent: 16, height: 24),
 
                   Padding(
