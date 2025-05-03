@@ -101,6 +101,30 @@ abstract class AppLocalizations {
   /// **'Simple Scanner'**
   String get appTitle;
 
+  /// For language setting
+  ///
+  /// In en, this message translates to:
+  /// **'Language'**
+  String get languageSectionTitle;
+
+  /// The English language
+  ///
+  /// In en, this message translates to:
+  /// **'English'**
+  String get englishLanguage;
+
+  /// The Spanish language
+  ///
+  /// In en, this message translates to:
+  /// **'Spanish'**
+  String get spanishLanguage;
+
+  /// The Chinese language
+  ///
+  /// In en, this message translates to:
+  /// **'Chinese'**
+  String get chineseLanguage;
+
   /// Label for the camera tab in the app's navigation
   ///
   /// In en, this message translates to:

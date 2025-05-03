@@ -69,12 +69,27 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
     );
   }
 
+  String _getLanguageName(Locale locale, AppLocalizations l10n) {
+    switch (locale.languageCode) {
+      case 'en':
+        return l10n.englishLanguage;
+      case 'es':
+        return l10n.spanishLanguage;
+      case 'zh':
+        return l10n.chineseLanguage;
+      default:
+        return locale.languageCode.toUpperCase();
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     _log.finer("Building SettingsScreen widget");
     final l10n = AppLocalizations.of(context);
     final theme = Theme.of(context);
     final currentMode = ref.watch(themeProvider);
+    final currentLocale = ref.watch(localeProvider);
+    final supportedLocales = AppLocalizations.supportedLocales;
 
     return Scaffold(
       appBar: AppBar(
@@ -94,6 +109,32 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
               child: ListView(
                 padding: const EdgeInsets.symmetric(vertical: 8.0),
                 children: <Widget>[
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+                    child: Text(l10n.languageSectionTitle, style: theme.textTheme.titleSmall),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                    child: DropdownButton<Locale>(
+                      value: currentLocale,
+                      isExpanded: true,
+                      items: supportedLocales.map((locale) {
+                        final languageName = _getLanguageName(locale, l10n);
+                        return DropdownMenuItem<Locale>(
+                          value: locale,
+                          child: Text(languageName),
+                        );
+                      }).toList(),
+                      onChanged: (Locale? newLocale) {
+                        if (newLocale != null) {
+                          _log.info("Language changed to: ${newLocale.languageCode}");
+                          ref.read(localeProvider.notifier).setLocale(newLocale);
+                        }
+                      },
+                    ),
+                  ),
+                  const Divider(indent: 16, endIndent: 16, height: 24),
+
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
                     child: Text(l10n.appearanceSectionTitle, style: theme.textTheme.titleSmall),

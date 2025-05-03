@@ -4,6 +4,22 @@
     "@appTitle": {
         "description": "The title of the application"
     },
+    "languageSectionTitle": "Language",
+    "@languageSectionTitle": {
+        "description": "For language setting"
+    },
+    "englishLanguage": "English",
+    "@englishLanguage": {
+        "description": "The English language"
+    },
+    "spanishLanguage": "Spanish",
+    "@spanishLanguage": {
+        "description": "The Spanish language"
+    },
+    "chineseLanguage": "Chinese",
+    "@chineseLanguage": {
+        "description": "The Chinese language"
+    },
     "scannerTabLabel": "Camera",
     "@scannerTabLabel": {
         "description": "Label for the camera tab in the app's navigation"

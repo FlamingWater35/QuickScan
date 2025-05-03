@@ -12,6 +12,18 @@ class AppLocalizationsZh extends AppLocalizations {
   String get appTitle => '简易扫描器';
 
   @override
+  String get languageSectionTitle => '语言';
+
+  @override
+  String get englishLanguage => '英语';
+
+  @override
+  String get spanishLanguage => '西班牙语';
+
+  @override
+  String get chineseLanguage => '中文';
+
+  @override
   String get scannerTabLabel => '相机';
 
   @override

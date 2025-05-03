@@ -68,17 +68,14 @@ class MyApp extends ConsumerWidget {
         final localizations = AppLocalizations.of(context);
         return localizations.appTitle;
       },
-
+      locale: ref.watch(localeProvider),
       localizationsDelegates: const [
         AppLocalizations.delegate,
         GlobalMaterialLocalizations.delegate,
         GlobalWidgetsLocalizations.delegate,
         GlobalCupertinoLocalizations.delegate,
       ],
-      supportedLocales: const [
-        Locale('en', ''),
-        Locale('zh', ''),
-      ],
+      supportedLocales: AppLocalizations.supportedLocales,
 
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(

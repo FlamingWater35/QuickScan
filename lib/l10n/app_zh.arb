@@ -1,6 +1,10 @@
 {
     "@@locale": "zh",
     "appTitle": "简易扫描器",
+    "languageSectionTitle": "语言",
+    "englishLanguage": "英语",
+    "spanishLanguage": "西班牙语",
+    "chineseLanguage": "中文",
     "scannerTabLabel": "相机",
     "fileTabLabel": "文件",
     "settingsTabLabel": "设置",
