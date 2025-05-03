@@ -25,12 +25,21 @@ class _UpdateScreenState extends State<UpdateScreen> {
   String? _assetName;
   String _errorMessage = '';
   double _downloadProgress = 0.0;
+  bool _isInitialUpdateChecked = false;
 
   @override
   void initState() {
     super.initState();
     _log.fine("initState called");
-    _performUpdateCheck();
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    if (!_isInitialUpdateChecked) {
+      _performUpdateCheck();
+      _isInitialUpdateChecked = true;
+    }
   }
 
   Future<void> _performUpdateCheck() async {

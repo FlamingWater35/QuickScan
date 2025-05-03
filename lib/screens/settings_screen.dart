@@ -18,12 +18,21 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
   final _log = Logger('SettingsScreen');
   String _appVersion = '';
   final String _updateHeroTag = 'update-hero-tag';
+  bool _isVersionLoaded = false;
 
   @override
   void initState() {
     super.initState();
     _log.fine("initState called");
-    _getAppVersion();
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    if (!_isVersionLoaded) {
+      _getAppVersion();
+      _isVersionLoaded = true;
+    }
   }
 
   Future<void> _getAppVersion() async {
