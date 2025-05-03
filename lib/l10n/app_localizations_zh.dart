@@ -299,4 +299,36 @@ class AppLocalizationsZh extends AppLocalizations {
   String imageScanError(String error) {
     return 'Error scanning image: $error';
   }
+
+  @override
+  String get settingsScreenTitle => 'Settings';
+
+  @override
+  String get appearanceSectionTitle => 'Appearance';
+
+  @override
+  String get applicationSectionTitle => 'Application';
+
+  @override
+  String get lightThemeLabel => 'Light';
+
+  @override
+  String get darkThemeLabel => 'Dark';
+
+  @override
+  String get systemThemeLabel => 'System';
+
+  @override
+  String get checkForUpdatesLabel => 'Check for Updates';
+
+  @override
+  String get versionLoadingText => 'Loading...';
+
+  @override
+  String get versionErrorText => 'Error loading version';
+
+  @override
+  String versionFormat(String version, String buildNumber) {
+    return 'Version $version ($buildNumber)';
+  }
 }

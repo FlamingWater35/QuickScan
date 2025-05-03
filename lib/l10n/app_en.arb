@@ -405,5 +405,55 @@
                 "example": "File not found"
             }
         }
+    },
+    "settingsScreenTitle": "Settings",
+    "@settingsScreenTitle": {
+        "description": "Title for the settings screen"
+    },
+    "appearanceSectionTitle": "Appearance",
+    "@appearanceSectionTitle": {
+        "description": "Section title for appearance settings"
+    },
+    "applicationSectionTitle": "Application",
+    "@applicationSectionTitle": {
+        "description": "Section title for application settings"
+    },
+    "lightThemeLabel": "Light",
+    "@lightThemeLabel": {
+        "description": "Label for light theme option"
+    },
+    "darkThemeLabel": "Dark",
+    "@darkThemeLabel": {
+        "description": "Label for dark theme option"
+    },
+    "systemThemeLabel": "System",
+    "@systemThemeLabel": {
+        "description": "Label for system default theme option"
+    },
+    "checkForUpdatesLabel": "Check for Updates",
+    "@checkForUpdatesLabel": {
+        "description": "Label for check for updates option"
+    },
+    "versionLoadingText": "Loading...",
+    "@versionLoadingText": {
+        "description": "Text shown while loading version info"
+    },
+    "versionErrorText": "Error loading version",
+    "@versionErrorText": {
+        "description": "Text shown when version info fails to load"
+    },
+    "versionFormat": "Version {version} ({buildNumber})",
+    "@versionFormat": {
+        "description": "Format for displaying version info",
+        "placeholders": {
+            "version": {
+                "type": "String",
+                "example": "1.0.0"
+            },
+            "buildNumber": {
+                "type": "String",
+                "example": "123"
+            }
+        }
     }
 }

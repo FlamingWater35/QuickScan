@@ -658,6 +658,66 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Error scanning image: {error}'**
   String imageScanError(String error);
+
+  /// Title for the settings screen
+  ///
+  /// In en, this message translates to:
+  /// **'Settings'**
+  String get settingsScreenTitle;
+
+  /// Section title for appearance settings
+  ///
+  /// In en, this message translates to:
+  /// **'Appearance'**
+  String get appearanceSectionTitle;
+
+  /// Section title for application settings
+  ///
+  /// In en, this message translates to:
+  /// **'Application'**
+  String get applicationSectionTitle;
+
+  /// Label for light theme option
+  ///
+  /// In en, this message translates to:
+  /// **'Light'**
+  String get lightThemeLabel;
+
+  /// Label for dark theme option
+  ///
+  /// In en, this message translates to:
+  /// **'Dark'**
+  String get darkThemeLabel;
+
+  /// Label for system default theme option
+  ///
+  /// In en, this message translates to:
+  /// **'System'**
+  String get systemThemeLabel;
+
+  /// Label for check for updates option
+  ///
+  /// In en, this message translates to:
+  /// **'Check for Updates'**
+  String get checkForUpdatesLabel;
+
+  /// Text shown while loading version info
+  ///
+  /// In en, this message translates to:
+  /// **'Loading...'**
+  String get versionLoadingText;
+
+  /// Text shown when version info fails to load
+  ///
+  /// In en, this message translates to:
+  /// **'Error loading version'**
+  String get versionErrorText;
+
+  /// Format for displaying version info
+  ///
+  /// In en, this message translates to:
+  /// **'Version {version} ({buildNumber})'**
+  String versionFormat(String version, String buildNumber);
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:logging/logging.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:simple_scanner/l10n/app_localizations.dart';
 
 import '../providers/providers.dart';
 import 'update_screen.dart';
@@ -15,7 +16,8 @@ class SettingsScreen extends ConsumerStatefulWidget {
 
 class _SettingsScreenState extends ConsumerState<SettingsScreen> {
   final _log = Logger('SettingsScreen');
-  String _appVersion = 'Loading...';
+  String _appVersion = 'version_placeholder';
+  static const _versionPlaceholder = 'version_placeholder';
   final String _updateHeroTag = 'update-hero-tag';
 
   @override
@@ -26,11 +28,16 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
   }
 
   Future<void> _getAppVersion() async {
+    final l10n = AppLocalizations.of(context);
+    
     try {
       final PackageInfo info = await PackageInfo.fromPlatform();
       if (mounted) {
         setState(() {
-          _appVersion = 'Version ${info.version} (${info.buildNumber})';
+          _appVersion = l10n.versionFormat(
+            info.version,
+            info.buildNumber,
+          );
         });
         _log.info("App version loaded: $_appVersion");
       }
@@ -38,7 +45,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
       _log.severe("Error getting package info", e, stackTrace);
       if (mounted) {
         setState(() {
-          _appVersion = 'Error loading version';
+          _appVersion = l10n.versionErrorText;
         });
       }
     }
@@ -57,6 +64,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
   @override
   Widget build(BuildContext context) {
     _log.finer("Building SettingsScreen widget");
+    final l10n = AppLocalizations.of(context);
     final theme = Theme.of(context);
     final currentMode = ref.watch(themeProvider);
 
@@ -66,7 +74,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
         title: Padding(
           padding: const EdgeInsets.fromLTRB(16.0, 24.0, 16.0, 8.0),
           child: Text(
-            'Settings',
+            l10n.settingsScreenTitle,
             style: theme.textTheme.headlineMedium,
           ),
         ),
@@ -80,26 +88,26 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                 children: <Widget>[
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
-                    child: Text('Appearance', style: theme.textTheme.titleSmall),
+                    child: Text(l10n.appearanceSectionTitle, style: theme.textTheme.titleSmall),
                   ),
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 4.0),
                     child: SegmentedButton<ThemeMode>(
                       selected: {currentMode},
-                      segments: const <ButtonSegment<ThemeMode>>[
+                      segments: <ButtonSegment<ThemeMode>>[
                         ButtonSegment<ThemeMode>(
                           value: ThemeMode.light,
-                          label: Text('Light'),
+                          label: Text(l10n.lightThemeLabel),
                           icon: Icon(Icons.light_mode_outlined),
                         ),
                         ButtonSegment<ThemeMode>(
                           value: ThemeMode.dark,
-                          label: Text('Dark'),
+                          label: Text(l10n.darkThemeLabel),
                           icon: Icon(Icons.dark_mode_outlined),
                         ),
                         ButtonSegment<ThemeMode>(
                           value: ThemeMode.system,
-                          label: Text('System'),
+                          label: Text(l10n.systemThemeLabel),
                           icon: Icon(Icons.settings_suggest_outlined),
                         ),
                       ],
@@ -118,7 +126,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
 
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
-                    child: Text('Application', style: theme.textTheme.titleSmall),
+                    child: Text(l10n.applicationSectionTitle, style: theme.textTheme.titleSmall),
                   ),
                   Hero(
                     tag: _updateHeroTag,
@@ -126,7 +134,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                       type: MaterialType.transparency,
                       child: ListTile(
                         leading: const Icon(Icons.system_update_alt_outlined),
-                        title: const Text('Check for Updates'),
+                        title: Text(l10n.checkForUpdatesLabel),
                         onTap: _handleCheckForUpdates,
                         contentPadding: const EdgeInsets.symmetric(horizontal: 16.0),
                       ),
@@ -139,7 +147,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
             Padding(
               padding: const EdgeInsets.all(16.0),
               child: Text(
-                _appVersion,
+                _appVersion == _versionPlaceholder ? l10n.versionLoadingText : _appVersion,
                 style: Theme.of(context).textTheme.bodyLarge,
                 textAlign: TextAlign.center,
               ),
