@@ -219,20 +219,27 @@ class _ResultScreenState extends State<ResultScreen> {
   }
 
   void _copyWifiCredentials() {
+    final l10n = AppLocalizations.of(context);
     if (_wifiCredentials == null) return;
 
     final ssid = _wifiCredentials!['S'] ?? 'N/A';
-    final password = _wifiCredentials!['P'] ?? 'N/A (maybe open network)';
+    final password = _wifiCredentials!['P'] ?? l10n.noPasswordLabel;
     final type = _wifiCredentials!['T'] ?? 'N/A';
 
-    final String credentialsText = 'Wi-Fi Network:\nSSID: $ssid\nPassword: $password\nSecurity Type: $type';
+    final String ssidText = l10n.ssidLabel;
+    final String passwordText = l10n.passwordLabel;
+    final String typeText = l10n.typeLabel;
+    final String wifiText = l10n.wifiNetworkLabel;
 
-    _copyToClipboard(credentialsText, 'Wi-Fi credentials copied to clipboard!');
+    final String credentialsText = '$wifiText\n$ssidText $ssid\n$passwordText $password\n$typeText $type';
+
+    _copyToClipboard(credentialsText, l10n.wifiCredentialsCopied);
   }
 
   Future<void> _exportVCard() async {
+    final l10n = AppLocalizations.of(context);
     if (widget.type != BarcodeType.contactInfo || widget.code.isEmpty) {
-      _showSnackBar("No vCard data to export.");
+      _showSnackBar(l10n.noVCardData);
       return;
     }
 
@@ -255,7 +262,7 @@ class _ResultScreenState extends State<ResultScreen> {
       }
 
       String? outputFile = await FilePicker.platform.saveFile(
-        dialogTitle: 'Save Contact',
+        dialogTitle: l10n.saveContactDialogTitle,
         fileName: suggestedFileName,
         allowedExtensions: ['vcf'],
         type: FileType.custom,
@@ -263,15 +270,15 @@ class _ResultScreenState extends State<ResultScreen> {
       );
 
       if (outputFile != null) {
-        _showSnackBar("vCard saved successfully!");
+        _showSnackBar(l10n.vCardSaved);
         _log.info("vCard saved as a file");
       } else {
-        _showSnackBar("vCard export cancelled or failed.");
+        _showSnackBar(l10n.vCardExportCancelled);
       }
     } catch (e) {
       _log.severe("Error saving vCard: $e");
       if (mounted) {
-        _showSnackBar("Error exporting vCard: ${e.toString()}");
+        _showSnackBar(l10n.vCardExportError(e.toString()));
       }
     }
   }
@@ -287,38 +294,39 @@ class _ResultScreenState extends State<ResultScreen> {
   }
 
   Widget _buildVCardContent(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     List<Widget> vCardRows = [];
 
     String displayName = "N/A";
     if (_parsedVCard['FN']?.isNotEmpty ?? false) {
       displayName = _parsedVCard['FN']!.first;
-      vCardRows.add(_buildInfoRow(context, Icons.person_outline, 'Name:', displayName));
+      vCardRows.add(_buildInfoRow(context, Icons.person_outline, l10n.nameLabel, displayName));
     } else if (_parsedVCard['N']?.isNotEmpty ?? false) {
       final nameParts = _parsedVCard['N']!.first.split(';');
       final firstName = nameParts.length > 1 ? nameParts[1] : '';
       final lastName = nameParts.isNotEmpty ? nameParts[0] : '';
       displayName = '$firstName $lastName'.trim();
       if (displayName.isNotEmpty) {
-        vCardRows.add(_buildInfoRow(context, Icons.person_outline, 'Name:', displayName));
+        vCardRows.add(_buildInfoRow(context, Icons.person_outline, l10n.nameLabel, displayName));
       }
     }
 
     if (_parsedVCard['ORG']?.isNotEmpty ?? false) {
-      vCardRows.add(_buildInfoRow(context, Icons.business, 'Organization:', _parsedVCard['ORG']!.first));
+      vCardRows.add(_buildInfoRow(context, Icons.business, l10n.organizationLabel, _parsedVCard['ORG']!.first));
     }
     if (_parsedVCard['TITLE']?.isNotEmpty ?? false) {
-      vCardRows.add(_buildInfoRow(context, Icons.work_outline, 'Title:', _parsedVCard['TITLE']!.first));
+      vCardRows.add(_buildInfoRow(context, Icons.work_outline, l10n.titleLabel, _parsedVCard['TITLE']!.first));
     }
 
     if (_parsedVCard['TEL']?.isNotEmpty ?? false) {
       for (final phone in _parsedVCard['TEL']!) {
-        vCardRows.add(_buildInfoRow(context, Icons.phone_outlined, 'Phone:', phone));
+        vCardRows.add(_buildInfoRow(context, Icons.phone_outlined, l10n.phoneLabel, phone));
       }
     }
 
     if (_parsedVCard['EMAIL']?.isNotEmpty ?? false) {
       for (final email in _parsedVCard['EMAIL']!) {
-        vCardRows.add(_buildInfoRow(context, Icons.email_outlined, 'Email:', email));
+        vCardRows.add(_buildInfoRow(context, Icons.email_outlined, l10n.emailLabel, email));
       }
     }
 
@@ -334,23 +342,23 @@ class _ResultScreenState extends State<ResultScreen> {
         ].where((part) => part.isNotEmpty).join(', ');
 
         if (displayAdr.isNotEmpty) {
-          vCardRows.add(_buildInfoRow(context, Icons.location_on_outlined, 'Address:', displayAdr));
+          vCardRows.add(_buildInfoRow(context, Icons.location_on_outlined, l10n.addressLabel, displayAdr));
         }
       }
     }
 
       if (_parsedVCard['URL']?.isNotEmpty ?? false) {
         for (final url in _parsedVCard['URL']!) {
-          vCardRows.add(_buildInfoRow(context, Icons.link, 'Website:', url));
+          vCardRows.add(_buildInfoRow(context, Icons.link, l10n.websiteLabel, url));
         }
       }
 
       if (_parsedVCard['NOTE']?.isNotEmpty ?? false) {
-        vCardRows.add(_buildInfoRow(context, Icons.note_outlined, 'Note:', _parsedVCard['NOTE']!.first));
+        vCardRows.add(_buildInfoRow(context, Icons.note_outlined, l10n.noteLabel, _parsedVCard['NOTE']!.first));
       }
 
       if (vCardRows.isEmpty) {
-        return _buildRawContentWithLabel(context, "Contact Info (vCard):");
+        return _buildRawContentWithLabel(context, l10n.contactInfoLabel);
       }
 
       return Column(
@@ -360,6 +368,7 @@ class _ResultScreenState extends State<ResultScreen> {
   }
 
   Widget _buildFormattedContent(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     final theme = Theme.of(context);
     final textStyle = theme.textTheme.bodyLarge?.copyWith(
       color: theme.colorScheme.onSurfaceVariant,
@@ -373,18 +382,18 @@ class _ResultScreenState extends State<ResultScreen> {
           return Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              _buildInfoRow(context, Icons.wifi, 'SSID:', _wifiCredentials!['S'] ?? 'N/A'),
-              _buildInfoRow(context, Icons.lock_outline, 'Type:', _wifiCredentials!['T'] ?? 'N/A'),
+              _buildInfoRow(context, Icons.wifi, l10n.ssidLabel, _wifiCredentials!['S'] ?? 'N/A'),
+              _buildInfoRow(context, Icons.lock_outline, l10n.typeLabel, _wifiCredentials!['T'] ?? 'N/A'),
               Row(
                 children: [
                   Icon(Icons.password, color: labelStyle?.color?.withAlpha(140), size: 20),
                   const SizedBox(width: 8),
-                  Text('Password:', style: labelStyle),
+                  Text(l10n.passwordLabel, style: labelStyle),
                   const SizedBox(width: 8),
                   Expanded(
                     child: SelectableText(
                       password.isEmpty
-                        ? '(none)'
+                        ? l10n.noneLabel
                         : _isWifiPasswordVisible ? password : ('*' * password.length),
                       style: textStyle?.copyWith(
                         fontStyle: password.isEmpty ? FontStyle.italic : FontStyle.normal),
@@ -396,7 +405,7 @@ class _ResultScreenState extends State<ResultScreen> {
                         _isWifiPasswordVisible ? Icons.visibility_off : Icons.visibility,
                         color: theme.colorScheme.primary,
                       ),
-                      tooltip: _isWifiPasswordVisible ? 'Hide password' : 'Show password',
+                      tooltip: _isWifiPasswordVisible ? l10n.hidePasswordTooltip : l10n.showPasswordTooltip,
                       onPressed: password.isNotEmpty ? () {
                         setState(() { _isWifiPasswordVisible = !_isWifiPasswordVisible; });
                       } : null,
@@ -406,7 +415,7 @@ class _ResultScreenState extends State<ResultScreen> {
                 ],
               ),
               if (_wifiCredentials!['H'] == 'true')
-                _buildInfoRow(context, Icons.visibility_off_outlined, 'Hidden:', 'Yes'),
+                _buildInfoRow(context, Icons.visibility_off_outlined, l10n.hiddenLabel, l10n.yesLabel),
             ],
           );
         }
@@ -418,11 +427,11 @@ class _ResultScreenState extends State<ResultScreen> {
           return Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              _buildInfoRow(context, Icons.alternate_email, 'To:', recipient),
+              _buildInfoRow(context, Icons.alternate_email, l10n.toLabel, recipient),
               if (_parsedUriParams['subject'] != null)
-                _buildInfoRow(context, Icons.subject, 'Subject:', _parsedUriParams['subject']!),
+                _buildInfoRow(context, Icons.subject, l10n.subjectLabel, _parsedUriParams['subject']!),
               if (_parsedUriParams['body'] != null)
-                _buildInfoRow(context, Icons.article_outlined, 'Body:', _parsedUriParams['body']!),
+                _buildInfoRow(context, Icons.article_outlined, l10n.bodyLabel, _parsedUriParams['body']!),
             ],
           );
         }
@@ -433,9 +442,9 @@ class _ResultScreenState extends State<ResultScreen> {
           return Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              _buildInfoRow(context, Icons.phone_android, 'To:', _parsedUriParams['to']!),
+              _buildInfoRow(context, Icons.phone_android, l10n.toLabel, _parsedUriParams['to']!),
               if (_parsedUriParams['body'] != null)
-                _buildInfoRow(context, Icons.article_outlined, 'Body:', _parsedUriParams['body']!),
+                _buildInfoRow(context, Icons.article_outlined, l10n.bodyLabel, _parsedUriParams['body']!),
             ],
           );
         }
@@ -450,12 +459,12 @@ class _ResultScreenState extends State<ResultScreen> {
         return Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            _buildInfoRow(context, Icons.pin_drop_outlined, 'Latitude:', lat),
-            _buildInfoRow(context, Icons.pin_drop_outlined, 'Longitude:', lon),
+            _buildInfoRow(context, Icons.pin_drop_outlined, l10n.latitudeLabel, lat),
+            _buildInfoRow(context, Icons.pin_drop_outlined, l10n.longitudeLabel, lon),
             if (alt != null)
-              _buildInfoRow(context, Icons.layers_outlined, 'Altitude:', alt),
+              _buildInfoRow(context, Icons.layers_outlined, l10n.altitudeLabel, alt),
             if (label != null)
-              _buildInfoRow(context, Icons.label_outline, 'Label:', label),
+              _buildInfoRow(context, Icons.label_outline, l10n.labelLabel, label),
           ],
         );
 
@@ -483,14 +492,14 @@ class _ResultScreenState extends State<ResultScreen> {
       case BarcodeType.contactInfo:
         return _buildVCardContent(context);
       case BarcodeType.calendarEvent:
-        return _buildRawContentWithLabel(context, "Calendar Event (iCal):");
+        return _buildRawContentWithLabel(context, l10n.calendarEventLabel);
       case BarcodeType.driverLicense:
-        return _buildRawContentWithLabel(context, "Driver License Data:");
+        return _buildRawContentWithLabel(context, l10n.driverLicenseLabel);
       case BarcodeType.unknown:
-        return _buildRawContentWithLabel(context, "Raw Data:"); 
+        return _buildRawContentWithLabel(context, l10n.rawDataLabel); 
     }
 
-    return _buildRawContentWithLabel(context, "Raw Data:");
+    return _buildRawContentWithLabel(context, l10n.rawDataLabel);
   }
 
   Widget _buildInfoRow(BuildContext context, IconData icon, String label, String value) {
@@ -663,7 +672,7 @@ class _ResultScreenState extends State<ResultScreen> {
         if (_launchableUri != null) {
           actionButtons.add(ElevatedButton.icon(
             icon: const Icon(Icons.map_outlined),
-            label: Text(l10n.locationFound),
+            label: Text(l10n.openInMaps),
             onPressed: () => _launchUriAction(_launchableUri!),
             style: ElevatedButton.styleFrom(backgroundColor: Colors.teal[600], foregroundColor: Colors.white),
           ));

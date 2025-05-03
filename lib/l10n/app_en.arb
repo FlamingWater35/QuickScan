@@ -71,6 +71,8 @@
     "productCodeFound": "Product Code Found",
     "driverLicenseFound": "Driver License Found",
     "contactInfoLabel": "Contact Info (vCard):",
+    "saveContactDialogTitle": "Save Contact",
+    "noneLabel": "(none)",
     "calendarEventLabel": "Calendar Event (iCal):",
     "driverLicenseLabel": "Driver License Data:",
     "rawDataLabel": "Raw Data:",
@@ -82,9 +84,11 @@
     "addressLabel": "Address:",
     "websiteLabel": "Website:",
     "noteLabel": "Note:",
+    "wifiNetworkLabel": "Wi-Fi Network:",
     "ssidLabel": "SSID:",
     "typeLabel": "Type:",
     "passwordLabel": "Password:",
+    "noPasswordLabel": "N/A (maybe no password)",
     "hiddenLabel": "Hidden:",
     "toLabel": "To:",
     "subjectLabel": "Subject:",
@@ -93,5 +97,9 @@
     "longitudeLabel": "Longitude:",
     "altitudeLabel": "Altitude:",
     "labelLabel": "Label:",
-    "noVCardData": "No vCard data to export."
+    "noVCardData": "No vCard data to export.",
+    "hidePasswordTooltip": "Hide password",
+    "showPasswordTooltip": "Show password",
+    "yesLabel": "Yes",
+    "noLabel": "No"
 }

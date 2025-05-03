@@ -359,6 +359,18 @@ abstract class AppLocalizations {
   /// **'Contact Info (vCard):'**
   String get contactInfoLabel;
 
+  /// No description provided for @saveContactDialogTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Save Contact'**
+  String get saveContactDialogTitle;
+
+  /// No description provided for @noneLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'(none)'**
+  String get noneLabel;
+
   /// No description provided for @calendarEventLabel.
   ///
   /// In en, this message translates to:
@@ -425,6 +437,12 @@ abstract class AppLocalizations {
   /// **'Note:'**
   String get noteLabel;
 
+  /// No description provided for @wifiNetworkLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Wi-Fi Network:'**
+  String get wifiNetworkLabel;
+
   /// No description provided for @ssidLabel.
   ///
   /// In en, this message translates to:
@@ -442,6 +460,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Password:'**
   String get passwordLabel;
+
+  /// No description provided for @noPasswordLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'N/A (maybe no password)'**
+  String get noPasswordLabel;
 
   /// No description provided for @hiddenLabel.
   ///
@@ -496,6 +520,30 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'No vCard data to export.'**
   String get noVCardData;
+
+  /// No description provided for @hidePasswordTooltip.
+  ///
+  /// In en, this message translates to:
+  /// **'Hide password'**
+  String get hidePasswordTooltip;
+
+  /// No description provided for @showPasswordTooltip.
+  ///
+  /// In en, this message translates to:
+  /// **'Show password'**
+  String get showPasswordTooltip;
+
+  /// No description provided for @yesLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Yes'**
+  String get yesLabel;
+
+  /// No description provided for @noLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'No'**
+  String get noLabel;
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {

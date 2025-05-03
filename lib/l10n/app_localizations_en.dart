@@ -147,6 +147,12 @@ class AppLocalizationsEn extends AppLocalizations {
   String get contactInfoLabel => 'Contact Info (vCard):';
 
   @override
+  String get saveContactDialogTitle => 'Save Contact';
+
+  @override
+  String get noneLabel => '(none)';
+
+  @override
   String get calendarEventLabel => 'Calendar Event (iCal):';
 
   @override
@@ -180,6 +186,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get noteLabel => 'Note:';
 
   @override
+  String get wifiNetworkLabel => 'Wi-Fi Network:';
+
+  @override
   String get ssidLabel => 'SSID:';
 
   @override
@@ -187,6 +196,9 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get passwordLabel => 'Password:';
+
+  @override
+  String get noPasswordLabel => 'N/A (maybe no password)';
 
   @override
   String get hiddenLabel => 'Hidden:';
@@ -214,4 +226,16 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get noVCardData => 'No vCard data to export.';
+
+  @override
+  String get hidePasswordTooltip => 'Hide password';
+
+  @override
+  String get showPasswordTooltip => 'Show password';
+
+  @override
+  String get yesLabel => 'Yes';
+
+  @override
+  String get noLabel => 'No';
 }
