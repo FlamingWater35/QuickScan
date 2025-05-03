@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:logging/logging.dart';
+import 'package:simple_scanner/l10n/app_localizations.dart';
 
 import '/screens/scanner_screen.dart';
 import '/screens/file_screen.dart';
@@ -59,6 +60,8 @@ class _MainScreenState extends State<MainScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+
     return Scaffold(
       body: IndexedStack(
         index: _selectedIndex,
@@ -68,21 +71,21 @@ class _MainScreenState extends State<MainScreen> {
         selectedIndex: _selectedIndex,
         onDestinationSelected: _onItemTapped,
         labelBehavior: NavigationDestinationLabelBehavior.alwaysShow,
-        destinations: const <NavigationDestination>[
+        destinations: <NavigationDestination>[
           NavigationDestination(
             selectedIcon: Icon(Icons.qr_code),
             icon: Icon(Icons.qr_code_scanner_outlined),
-            label: 'Camera',
+            label: l10n.scannerTabLabel,
           ),
           NavigationDestination(
             selectedIcon: Icon(Icons.image),
             icon: Icon(Icons.image_outlined),
-            label: 'File',
+            label: l10n.fileTabLabel,
           ),
           NavigationDestination(
             selectedIcon: Icon(Icons.settings),
             icon: Icon(Icons.settings_outlined),
-            label: 'Settings',
+            label: l10n.settingsTabLabel,
           ),
         ],
       ),

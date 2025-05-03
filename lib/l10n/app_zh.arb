@@ -1,0 +1,39 @@
+{
+    "@@locale": "zh",
+    "appTitle": "简易扫描器",
+    "@appTitle": {
+        "description": "应用程序标题"
+    },
+    "scannerTabLabel": "相机",
+    "fileTabLabel": "文件",
+    "settingsTabLabel": "设置",
+    "scannerTabTitle": "扫描二维码",
+    "scannerTabScanText": "将二维码对准框内进行扫描",
+    "cameraPermissionRequestText": "扫描二维码需要相机权限。请授予权限。",
+    "cameraPermissionRestrictedText": "相机访问受限（例如，由于设备策略或家长控制）。无法使用扫描功能。",
+    "cameraPermissionPermanentlyDeniedText": "相机权限被永久拒绝。请在应用设置中启用它以扫描二维码。",
+    "openSettingsText": "打开设置",
+    "grantPermissionText": "授予权限",
+    "couldNotPerformActionText": "无法对 \"{uri}\" 执行操作",
+    "@couldNotPerformActionText": {
+        "placeholders": {
+            "uri": {
+                "type": "String",
+                "example": "https://github.com"
+            }
+        }
+    },
+    "genericErrorText": "错误 \"{errorCause}\": \"{error}\"",
+    "@genericErrorText": {
+        "placeholders": {
+            "errorCause": {
+                "type": "String",
+                "example": "启动链接"
+            },
+            "error": {
+                "type": "String",
+                "example": "系统错误"
+            }
+        }
+    }
+}

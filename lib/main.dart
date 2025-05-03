@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:logging/logging.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:simple_scanner/l10n/app_localizations.dart';
 
 import 'main_screen.dart';
 import 'providers/providers.dart';
@@ -62,7 +64,21 @@ class MyApp extends ConsumerWidget {
     }
 
     return MaterialApp(
-      title: 'Simple Scanner',
+      onGenerateTitle: (context) {
+        final localizations = AppLocalizations.of(context);
+        return localizations.appTitle;
+      },
+
+      localizationsDelegates: const [
+        AppLocalizations.delegate,
+        GlobalMaterialLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate,
+        GlobalCupertinoLocalizations.delegate,
+      ],
+      supportedLocales: const [
+        Locale('en', ''),
+        Locale('zh', ''),
+      ],
 
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(

@@ -5,6 +5,7 @@ import 'package:url_launcher/url_launcher.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
 import 'package:logging/logging.dart';
 import 'package:file_picker/file_picker.dart';
+import 'package:simple_scanner/l10n/app_localizations.dart';
 
 class ResultScreen extends StatefulWidget {
   final String code;
@@ -193,6 +194,8 @@ class _ResultScreenState extends State<ResultScreen> {
   }
 
   Future<void> _launchUriAction(Uri uri) async {
+    final l10n = AppLocalizations.of(context);
+
     try {
       final mode = (uri.scheme == 'http' || uri.scheme == 'https')
         ? LaunchMode.externalApplication
@@ -200,12 +203,12 @@ class _ResultScreenState extends State<ResultScreen> {
 
       bool launched = await launchUrl(uri, mode: mode);
       if (!launched && mounted) {
-        _showSnackBar('Could not perform action for $uri');
+        _showSnackBar(l10n.couldNotPerformActionText(uri.toString()));
       }
     } catch (e) {
       _log.severe("Error launching URL: $e");
       if (mounted) {
-        _showSnackBar('Error launching link: ${e.toString()}');
+        _showSnackBar(l10n.genericErrorText('launching link', e.toString()));
       }
     }
   }

@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
 import 'package:logging/logging.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:simple_scanner/l10n/app_localizations.dart';
 
 import 'scan_result_screen.dart';
 
@@ -390,11 +391,11 @@ class QRScannerScreenState extends State<QRScannerScreen> with WidgetsBindingObs
     await _subscription?.cancel();
     _subscription = null;
     try {
-        if (controller.value.isRunning) {
-            await controller.stop();
-        }
+      if (controller.value.isRunning) {
+        await controller.stop();
+      }
     } catch (e) {
-        _log.warning("Error stopping controller during dispose: $e");
+      _log.warning("Error stopping controller during dispose: $e");
     }
     await controller.dispose();
     _log.fine("QRScannerScreenState: Disposed.");
@@ -403,9 +404,11 @@ class QRScannerScreenState extends State<QRScannerScreen> with WidgetsBindingObs
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+    
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Scan QR Code'),
+        title: Text(l10n.scannerTabTitle),
         actions: [
           if (_cameraPermissionStatus == PermissionStatus.granted)
             ValueListenableBuilder(
@@ -484,6 +487,8 @@ class QRScannerScreenState extends State<QRScannerScreen> with WidgetsBindingObs
   }
 
   Widget _buildScannerBody() {
+    final l10n = AppLocalizations.of(context);
+
     if (_isCheckingPermission) {
       _log.finer("Building: Checking Permissions UI");
       return const Center(child: CircularProgressIndicator());
@@ -547,8 +552,8 @@ class QRScannerScreenState extends State<QRScannerScreen> with WidgetsBindingObs
                 color: Colors.black.withAlpha(128),
                 borderRadius: BorderRadius.circular(8),
               ),
-              child: const Text(
-                'Align QR code within frame to scan',
+              child: Text(
+                l10n.scannerTabScanText,
                 style: TextStyle(color: Colors.white, fontSize: 16.0),
                 textAlign: TextAlign.center,
               ),
@@ -564,6 +569,8 @@ class QRScannerScreenState extends State<QRScannerScreen> with WidgetsBindingObs
   }
 
   Widget _buildPermissionDeniedWidget() {
+    final l10n = AppLocalizations.of(context);
+
     bool isPermanentlyDenied = _cameraPermissionStatus == PermissionStatus.permanentlyDenied;
     bool isRestricted = _cameraPermissionStatus == PermissionStatus.restricted;
 
@@ -572,19 +579,19 @@ class QRScannerScreenState extends State<QRScannerScreen> with WidgetsBindingObs
     VoidCallback? onPressed;
 
     if (isPermanentlyDenied) {
-      message = 'Camera permission is permanently denied. Please enable it in app settings to scan QR codes.';
-      buttonText = 'Open Settings';
+      message = l10n.cameraPermissionPermanentlyDeniedText;
+      buttonText = l10n.openSettingsText;
       onPressed = () async {
         _log.fine("Opening app settings...");
         await openAppSettings();
       };
     } else if (isRestricted) {
-      message = 'Camera access is restricted (e.g., by device policy or parental controls). Scanning is unavailable.';
+      message = l10n.cameraPermissionRestrictedText;
       buttonText = '';
       onPressed = null;
     } else {
-      message = 'Camera permission is required to scan QR codes. Please grant permission.';
-      buttonText = 'Grant Permission';
+      message = l10n.cameraPermissionRequestText;
+      buttonText = l10n.grantPermissionText;
       onPressed = _requestPermission;
     }
 
@@ -606,8 +613,8 @@ class QRScannerScreenState extends State<QRScannerScreen> with WidgetsBindingObs
                     return ElevatedButton(
                       onPressed: isRequesting ? null : onPressed,
                       child: isRequesting
-                          ? const SizedBox(width: 20, height: 20, child: CircularProgressIndicator(strokeWidth: 2))
-                          : Text(buttonText),
+                        ? const SizedBox(width: 20, height: 20, child: CircularProgressIndicator(strokeWidth: 2))
+                        : Text(buttonText),
                     );
                   }
               ),
@@ -618,7 +625,9 @@ class QRScannerScreenState extends State<QRScannerScreen> with WidgetsBindingObs
   }
 
   Widget _buildErrorWidget(String message, bool showSettingsButton) {
-     return Center(
+    final l10n = AppLocalizations.of(context);
+  
+    return Center(
       child: Padding(
         padding: const EdgeInsets.all(24.0),
         child: Column(
@@ -635,7 +644,7 @@ class QRScannerScreenState extends State<QRScannerScreen> with WidgetsBindingObs
                   _log.fine("Opening app settings from error widget...");
                   await openAppSettings();
                 },
-                child: const Text('Open Settings'),
+                child: Text(l10n.openSettingsText),
               ),
           ],
         ),

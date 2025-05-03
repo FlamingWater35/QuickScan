@@ -1,0 +1,39 @@
+{
+    "@@locale": "en",
+    "appTitle": "Simple Scanner",
+    "@appTitle": {
+        "description": "The title of the application"
+    },
+    "scannerTabLabel": "Camera",
+    "fileTabLabel": "File",
+    "settingsTabLabel": "Settings",
+    "scannerTabTitle": "Scan QR Code",
+    "scannerTabScanText": "Align QR code within frame to scan",
+    "cameraPermissionRequestText": "Camera permission is required to scan QR codes. Please grant permission.",
+    "cameraPermissionRestrictedText": "Camera access is restricted (e.g., by device policy or parental controls). Scanning is unavailable.",
+    "cameraPermissionPermanentlyDeniedText": "Camera permission is permanently denied. Please enable it in app settings to scan QR codes.",
+    "openSettingsText": "Open Settings",
+    "grantPermissionText": "Grant Permission",
+    "couldNotPerformActionText": "Could not perform action for \"{uri}\"",
+    "@couldNotPerformActionText": {
+        "placeholders": {
+            "uri": {
+                "type": "String",
+                "example": "https://github.com"
+            }
+        }
+    },
+    "genericErrorText": "Error \"{errorCause}\": \"{error}\"",
+    "@genericErrorText": {
+        "placeholders": {
+            "errorCause": {
+                "type": "String",
+                "example": "launching link"
+            },
+            "error": {
+                "type": "String",
+                "example": "SystemError"
+            }
+        }
+    }
+}
