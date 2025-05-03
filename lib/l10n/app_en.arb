@@ -455,5 +455,115 @@
                 "example": "123"
             }
         }
+    },
+    "updateScreenTitle": "App Update",
+    "@updateScreenTitle": {
+        "description": "Title for the app update screen"
+    },
+    "checkingForUpdates": "Checking for updates...",
+    "@checkingForUpdates": {
+        "description": "Message shown while checking for updates"
+    },
+    "updateAvailable": "Update Available!",
+    "@updateAvailable": {
+        "description": "Message shown when an update is available"
+    },
+    "currentVersionLabel": "Current version: {version}",
+    "@currentVersionLabel": {
+        "description": "Label showing the current app version",
+        "placeholders": {
+            "version": {
+                "type": "String",
+                "example": "1.0.0"
+            }
+        }
+    },
+    "newVersionLabel": "New version: {version}",
+    "@newVersionLabel": {
+        "description": "Label showing the new available version",
+        "placeholders": {
+            "version": {
+                "type": "String",
+                "example": "1.1.0"
+            }
+        }
+    },
+    "latestVersionLabel": "(Latest available: {version})",
+    "@latestVersionLabel": {
+        "description": "Label showing the latest available version",
+        "placeholders": {
+            "version": {
+                "type": "String",
+                "example": "1.1.0"
+            }
+        }
+    },
+    "downloadAndInstallButton": "Download & Install",
+    "@downloadAndInstallButton": {
+        "description": "Button text to start downloading and installing an update"
+    },
+    "downloadingUpdate": "Downloading update ({version})...",
+    "@downloadingUpdate": {
+        "description": "Message shown while downloading an update",
+        "placeholders": {
+            "version": {
+                "type": "String",
+                "example": "1.1.0"
+            }
+        }
+    },
+    "downloadProgress": "{progress}%",
+    "@downloadProgress": {
+        "description": "Text showing the download progress percentage",
+        "placeholders": {
+            "progress": {
+                "type": "String",
+                "example": "75"
+            }
+        }
+    },
+    "startingInstall": "Starting install...",
+    "@startingInstall": {
+        "description": "Message shown when the installation process is starting"
+    },
+    "updateFailed": "Update Failed",
+    "@updateFailed": {
+        "description": "Message shown when the update process fails"
+    },
+    "retryCheckButton": "Retry Check",
+    "@retryCheckButton": {
+        "description": "Button text to retry checking for updates"
+    },
+    "upToDate": "You're up to date!",
+    "@upToDate": {
+        "description": "Message shown when no updates are available"
+    },
+    "checkAgainButton": "Check Again",
+    "@checkAgainButton": {
+        "description": "Button text to check for updates again"
+    },
+    "installDialogShown": "Install dialog shown",
+    "@installDialogShown": {
+        "description": "Message shown when the install prompt is displayed"
+    },
+    "noUpdateAvailable": "No new update available.",
+    "@noUpdateAvailable": {
+        "description": "Message shown when no updates are found"
+    },
+    "unexpectedErrorDuringCheck": "An unexpected error occurred during check.",
+    "@unexpectedErrorDuringCheck": {
+        "description": "Error message shown when an unexpected error occurs during update check"
+    },
+    "updateInfoIncomplete": "Update information is incomplete.",
+    "@updateInfoIncomplete": {
+        "description": "Error message shown when update URL or filename is missing"
+    },
+    "downloadFailed": "Download failed. Check connection and permissions.",
+    "@downloadFailed": {
+        "description": "Error message shown when the download fails"
+    },
+    "installationFailed": "Could not start installation. Check permissions.",
+    "@installationFailed": {
+        "description": "Error message shown when the installation cannot be initiated"
     }
 }

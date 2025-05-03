@@ -331,4 +331,74 @@ class AppLocalizationsZh extends AppLocalizations {
   String versionFormat(String version, String buildNumber) {
     return 'Version $version ($buildNumber)';
   }
+
+  @override
+  String get updateScreenTitle => 'App Update';
+
+  @override
+  String get checkingForUpdates => 'Checking for updates...';
+
+  @override
+  String get updateAvailable => 'Update Available!';
+
+  @override
+  String currentVersionLabel(String version) {
+    return 'Current version: $version';
+  }
+
+  @override
+  String newVersionLabel(String version) {
+    return 'New version: $version';
+  }
+
+  @override
+  String latestVersionLabel(String version) {
+    return '(Latest available: $version)';
+  }
+
+  @override
+  String get downloadAndInstallButton => 'Download & Install';
+
+  @override
+  String downloadingUpdate(String version) {
+    return 'Downloading update ($version)...';
+  }
+
+  @override
+  String downloadProgress(String progress) {
+    return '$progress%';
+  }
+
+  @override
+  String get startingInstall => 'Starting install...';
+
+  @override
+  String get updateFailed => 'Update Failed';
+
+  @override
+  String get retryCheckButton => 'Retry Check';
+
+  @override
+  String get upToDate => 'You\'re up to date!';
+
+  @override
+  String get checkAgainButton => 'Check Again';
+
+  @override
+  String get installDialogShown => 'Install dialog shown';
+
+  @override
+  String get noUpdateAvailable => 'No new update available.';
+
+  @override
+  String get unexpectedErrorDuringCheck => 'An unexpected error occurred during check.';
+
+  @override
+  String get updateInfoIncomplete => 'Update information is incomplete.';
+
+  @override
+  String get downloadFailed => 'Download failed. Check connection and permissions.';
+
+  @override
+  String get installationFailed => 'Could not start installation. Check permissions.';
 }

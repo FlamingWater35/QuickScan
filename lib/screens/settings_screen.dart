@@ -16,8 +16,7 @@ class SettingsScreen extends ConsumerStatefulWidget {
 
 class _SettingsScreenState extends ConsumerState<SettingsScreen> {
   final _log = Logger('SettingsScreen');
-  String _appVersion = 'version_placeholder';
-  static const _versionPlaceholder = 'version_placeholder';
+  String _appVersion = '';
   final String _updateHeroTag = 'update-hero-tag';
 
   @override
@@ -147,7 +146,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
             Padding(
               padding: const EdgeInsets.all(16.0),
               child: Text(
-                _appVersion == _versionPlaceholder ? l10n.versionLoadingText : _appVersion,
+                _appVersion.isEmpty ? l10n.versionLoadingText : _appVersion,
                 style: Theme.of(context).textTheme.bodyLarge,
                 textAlign: TextAlign.center,
               ),

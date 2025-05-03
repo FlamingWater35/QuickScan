@@ -718,6 +718,126 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Version {version} ({buildNumber})'**
   String versionFormat(String version, String buildNumber);
+
+  /// Title for the app update screen
+  ///
+  /// In en, this message translates to:
+  /// **'App Update'**
+  String get updateScreenTitle;
+
+  /// Message shown while checking for updates
+  ///
+  /// In en, this message translates to:
+  /// **'Checking for updates...'**
+  String get checkingForUpdates;
+
+  /// Message shown when an update is available
+  ///
+  /// In en, this message translates to:
+  /// **'Update Available!'**
+  String get updateAvailable;
+
+  /// Label showing the current app version
+  ///
+  /// In en, this message translates to:
+  /// **'Current version: {version}'**
+  String currentVersionLabel(String version);
+
+  /// Label showing the new available version
+  ///
+  /// In en, this message translates to:
+  /// **'New version: {version}'**
+  String newVersionLabel(String version);
+
+  /// Label showing the latest available version
+  ///
+  /// In en, this message translates to:
+  /// **'(Latest available: {version})'**
+  String latestVersionLabel(String version);
+
+  /// Button text to start downloading and installing an update
+  ///
+  /// In en, this message translates to:
+  /// **'Download & Install'**
+  String get downloadAndInstallButton;
+
+  /// Message shown while downloading an update
+  ///
+  /// In en, this message translates to:
+  /// **'Downloading update ({version})...'**
+  String downloadingUpdate(String version);
+
+  /// Text showing the download progress percentage
+  ///
+  /// In en, this message translates to:
+  /// **'{progress}%'**
+  String downloadProgress(String progress);
+
+  /// Message shown when the installation process is starting
+  ///
+  /// In en, this message translates to:
+  /// **'Starting install...'**
+  String get startingInstall;
+
+  /// Message shown when the update process fails
+  ///
+  /// In en, this message translates to:
+  /// **'Update Failed'**
+  String get updateFailed;
+
+  /// Button text to retry checking for updates
+  ///
+  /// In en, this message translates to:
+  /// **'Retry Check'**
+  String get retryCheckButton;
+
+  /// Message shown when no updates are available
+  ///
+  /// In en, this message translates to:
+  /// **'You\'re up to date!'**
+  String get upToDate;
+
+  /// Button text to check for updates again
+  ///
+  /// In en, this message translates to:
+  /// **'Check Again'**
+  String get checkAgainButton;
+
+  /// Message shown when the install prompt is displayed
+  ///
+  /// In en, this message translates to:
+  /// **'Install dialog shown'**
+  String get installDialogShown;
+
+  /// Message shown when no updates are found
+  ///
+  /// In en, this message translates to:
+  /// **'No new update available.'**
+  String get noUpdateAvailable;
+
+  /// Error message shown when an unexpected error occurs during update check
+  ///
+  /// In en, this message translates to:
+  /// **'An unexpected error occurred during check.'**
+  String get unexpectedErrorDuringCheck;
+
+  /// Error message shown when update URL or filename is missing
+  ///
+  /// In en, this message translates to:
+  /// **'Update information is incomplete.'**
+  String get updateInfoIncomplete;
+
+  /// Error message shown when the download fails
+  ///
+  /// In en, this message translates to:
+  /// **'Download failed. Check connection and permissions.'**
+  String get downloadFailed;
+
+  /// Error message shown when the installation cannot be initiated
+  ///
+  /// In en, this message translates to:
+  /// **'Could not start installation. Check permissions.'**
+  String get installationFailed;
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {
