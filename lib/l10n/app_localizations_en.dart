@@ -238,4 +238,36 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get noLabel => 'No';
+
+  @override
+  String get errorRequestingPermission => 'Error requesting permission.';
+
+  @override
+  String get errorReceivingBarcodeData => 'Error receiving barcode data.';
+
+  @override
+  String get failedToSetUpBarcodeListener => 'Failed to set up barcode listener.';
+
+  @override
+  String get couldNotToggleFlash => 'Could not toggle flash.';
+
+  @override
+  String get couldNotSwitchCamera => 'Could not switch camera.';
+
+  @override
+  String cameraStartError(String error) {
+    return 'Failed to start camera. Error: $error';
+  }
+
+  @override
+  String get cameraGenericError => 'An unexpected error occurred while starting the camera.';
+
+  @override
+  String get cameraPermissionDeniedInSettings => 'Camera permission denied. Please grant permission in settings.';
+
+  @override
+  String get cameraPermissionDeniedOrRevoked => 'Camera permission was denied or revoked.\nPlease grant permission in app settings.';
+
+  @override
+  String get cameraNotSupported => 'Camera is unavailable or not supported on this device.';
 }

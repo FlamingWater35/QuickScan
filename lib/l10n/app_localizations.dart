@@ -544,6 +544,66 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'No'**
   String get noLabel;
+
+  /// Error message shown when permission request fails
+  ///
+  /// In en, this message translates to:
+  /// **'Error requesting permission.'**
+  String get errorRequestingPermission;
+
+  /// Error message shown when there is an error listening to barcode stream
+  ///
+  /// In en, this message translates to:
+  /// **'Error receiving barcode data.'**
+  String get errorReceivingBarcodeData;
+
+  /// Error message shown when setting up the barcode listener fails
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to set up barcode listener.'**
+  String get failedToSetUpBarcodeListener;
+
+  /// Error message shown when toggling the flash fails
+  ///
+  /// In en, this message translates to:
+  /// **'Could not toggle flash.'**
+  String get couldNotToggleFlash;
+
+  /// Error message shown when switching the camera fails
+  ///
+  /// In en, this message translates to:
+  /// **'Could not switch camera.'**
+  String get couldNotSwitchCamera;
+
+  /// Error message shown when starting the camera fails
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to start camera. Error: {error}'**
+  String cameraStartError(String error);
+
+  /// Generic error message shown when an unexpected error occurs during camera start
+  ///
+  /// In en, this message translates to:
+  /// **'An unexpected error occurred while starting the camera.'**
+  String get cameraGenericError;
+
+  /// Error message shown when camera permission is denied and requires settings adjustment
+  ///
+  /// In en, this message translates to:
+  /// **'Camera permission denied. Please grant permission in settings.'**
+  String get cameraPermissionDeniedInSettings;
+
+  /// Error message shown when camera permission is denied or revoked during runtime
+  ///
+  /// In en, this message translates to:
+  /// **'Camera permission was denied or revoked.\nPlease grant permission in app settings.'**
+  String get cameraPermissionDeniedOrRevoked;
+
+  /// Error message shown when camera isn't detected
+  ///
+  /// In en, this message translates to:
+  /// **'Camera is unavailable or not supported on this device.'**
+  String get cameraNotSupported;
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {

@@ -317,5 +317,51 @@
     "noLabel": "No",
     "@noLabel": {
         "description": "Label for negative response"
+    },
+    "errorRequestingPermission": "Error requesting permission.",
+    "@errorRequestingPermission": {
+        "description": "Error message shown when permission request fails"
+    },
+    "errorReceivingBarcodeData": "Error receiving barcode data.",
+    "@errorReceivingBarcodeData": {
+        "description": "Error message shown when there is an error listening to barcode stream"
+    },
+    "failedToSetUpBarcodeListener": "Failed to set up barcode listener.",
+    "@failedToSetUpBarcodeListener": {
+        "description": "Error message shown when setting up the barcode listener fails"
+    },
+    "couldNotToggleFlash": "Could not toggle flash.",
+    "@couldNotToggleFlash": {
+        "description": "Error message shown when toggling the flash fails"
+    },
+    "couldNotSwitchCamera": "Could not switch camera.",
+    "@couldNotSwitchCamera": {
+        "description": "Error message shown when switching the camera fails"
+    },
+    "cameraStartError": "Failed to start camera. Error: {error}",
+    "@cameraStartError": {
+        "description": "Error message shown when starting the camera fails",
+        "placeholders": {
+            "error": {
+                "type": "String",
+                "example": "Unknown"
+            }
+        }
+    },
+    "cameraGenericError": "An unexpected error occurred while starting the camera.",
+    "@cameraGenericError": {
+        "description": "Generic error message shown when an unexpected error occurs during camera start"
+    },
+    "cameraPermissionDeniedInSettings": "Camera permission denied. Please grant permission in settings.",
+    "@cameraPermissionDeniedInSettings": {
+        "description": "Error message shown when camera permission is denied and requires settings adjustment"
+    },
+    "cameraPermissionDeniedOrRevoked": "Camera permission was denied or revoked.\nPlease grant permission in app settings.",
+    "@cameraPermissionDeniedOrRevoked": {
+        "description": "Error message shown when camera permission is denied or revoked during runtime"
+    },
+    "cameraNotSupported": "Camera is unavailable or not supported on this device.",
+    "@cameraNotSupported": {
+        "description": "Error message shown when camera isn't detected"
     }
 }

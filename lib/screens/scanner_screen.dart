@@ -69,6 +69,8 @@ class QRScannerScreenState extends State<QRScannerScreen> with WidgetsBindingObs
   }
 
   Future<void> _requestPermission() async {
+    final l10n = AppLocalizations.of(context);
+
     if (_isRequestingPermission || !mounted) {
       _log.warning("Permission request attempted while another is active or widget is unmounted. Skipping.");
       return;
@@ -98,16 +100,16 @@ class QRScannerScreenState extends State<QRScannerScreen> with WidgetsBindingObs
         } else {
           _log.warning("Permission denied after request ($status).");
           if (status.isPermanentlyDenied) {
-            _showErrorSnackBar("Permission permanently denied. Please enable in settings.");
+            _showErrorSnackBar(l10n.cameraPermissionDeniedInSettings);
           } else if (!status.isRestricted) {
-            _showErrorSnackBar("Camera permission is required to scan QR codes.");
+            _showErrorSnackBar(l10n.cameraPermissionRequestText);
           }
         }
       }
     } catch (e, s) {
       _log.severe("Error during permission request: $e", e, s);
       if (mounted) {
-        _showErrorSnackBar("Error requesting permission.");
+        _showErrorSnackBar(l10n.errorRequestingPermission);
         setState(() {
           _cameraPermissionStatus = PermissionStatus.denied;
         });
@@ -168,6 +170,8 @@ class QRScannerScreenState extends State<QRScannerScreen> with WidgetsBindingObs
   }
 
   void _listenForBarcodes() {
+    final l10n = AppLocalizations.of(context);
+
     if (!mounted ||
         _cameraPermissionStatus != PermissionStatus.granted ||
         !controller.value.isInitialized ||
@@ -183,11 +187,11 @@ class QRScannerScreenState extends State<QRScannerScreen> with WidgetsBindingObs
     try {
       _subscription = controller.barcodes.listen(_handleBarcode, onError: (error) {
         _log.severe("QRScannerScreenState: Error listening to barcode stream: $error");
-        _showErrorSnackBar("Error receiving barcode data.");
+        _showErrorSnackBar(l10n.errorReceivingBarcodeData);
       });
     } catch (e, s) {
       _log.severe("QRScannerScreenState: Exception setting up barcode listener: $e", e, s);
-      _showErrorSnackBar("Failed to set up barcode listener.");
+      _showErrorSnackBar(l10n.failedToSetUpBarcodeListener);
     }
   }
 
@@ -304,11 +308,13 @@ class QRScannerScreenState extends State<QRScannerScreen> with WidgetsBindingObs
         _log.severe("Error stopping scanner during pause: $e", e, s);
       }
     } else {
-       _log.fine("Pause requested but scanner controller already stopped.");
+      _log.fine("Pause requested but scanner controller already stopped.");
     }
   }
 
   Future<void> _resumeScanner() async {
+    final l10n = AppLocalizations.of(context);
+
     if (_isRequestingPermission || _cameraPermissionStatus != PermissionStatus.granted) {
       _log.severe("_resumeScanner: Aborting resume (requesting permission: $_isRequestingPermission, status: $_cameraPermissionStatus).");
       return;
@@ -345,9 +351,9 @@ class QRScannerScreenState extends State<QRScannerScreen> with WidgetsBindingObs
           if (mounted) {
             setState(() => _cameraPermissionStatus = PermissionStatus.denied);
           }
-          _showErrorSnackBar("Camera permission denied. Please grant permission in settings.");
+          _showErrorSnackBar(l10n.cameraPermissionDeniedInSettings);
         } else {
-          _showErrorSnackBar("Failed to start camera. Error: ${error?.errorDetails ?? error?.errorCode ?? 'Unknown'}");
+          _showErrorSnackBar(l10n.cameraStartError(error?.errorDetails.toString() ?? error?.errorCode.toString() ?? 'Unknown'));
         }
       }
     } on MobileScannerException catch (e, s) {
@@ -355,15 +361,15 @@ class QRScannerScreenState extends State<QRScannerScreen> with WidgetsBindingObs
       if (mounted) {
         if (e.errorCode == MobileScannerErrorCode.permissionDenied) {
           setState(() => _cameraPermissionStatus = PermissionStatus.denied);
-          _showErrorSnackBar("Camera permission denied. Please grant permission in settings.");
+          _showErrorSnackBar(l10n.cameraPermissionDeniedInSettings);
         } else {
-          _showErrorSnackBar("Camera Error: ${e.errorDetails ?? e.errorCode.toString()}");
+          _showErrorSnackBar(l10n.cameraStartError(e.errorDetails.toString()));
         }
       }
     } catch (e, s) {
       _log.severe("QRScannerScreenState: Generic error during controller.start(): $e", e, s);
       if (mounted) {
-        _showErrorSnackBar("An unexpected error occurred while starting the camera.");
+        _showErrorSnackBar(l10n.cameraGenericError);
       }
     }
 
@@ -452,7 +458,7 @@ class QRScannerScreenState extends State<QRScannerScreen> with WidgetsBindingObs
                       await controller.toggleTorch();
                     } catch (e) {
                       _log.severe("Error toggling torch: $e");
-                      _showErrorSnackBar("Could not toggle flash.");
+                      _showErrorSnackBar(l10n.couldNotToggleFlash);
                     }
                   },
                 );
@@ -474,7 +480,7 @@ class QRScannerScreenState extends State<QRScannerScreen> with WidgetsBindingObs
                       await controller.switchCamera();
                     } catch (e) {
                       _log.severe("Error switching camera: $e");
-                      _showErrorSnackBar("Could not switch camera.");
+                      _showErrorSnackBar(l10n.couldNotSwitchCamera);
                     }
                   },
                 );
@@ -502,11 +508,11 @@ class QRScannerScreenState extends State<QRScannerScreen> with WidgetsBindingObs
             controller: controller,
             errorBuilder: (context, error, child) {
               _log.severe("MobileScanner errorBuilder: ${error.errorCode} ${error.errorDetails}");
-              String errorMessage = 'An unexpected camera error occurred.';
+              String errorMessage = l10n.cameraGenericError;
               bool showSettingsButton = false;
 
               if (error.errorCode == MobileScannerErrorCode.permissionDenied) {
-                errorMessage = 'Camera permission was denied or revoked.\nPlease grant permission in app settings.';
+                errorMessage = l10n.cameraPermissionDeniedOrRevoked;
                 showSettingsButton = true;
                 WidgetsBinding.instance.addPostFrameCallback((_) {
                   if (mounted && _cameraPermissionStatus != PermissionStatus.denied) {
@@ -515,9 +521,9 @@ class QRScannerScreenState extends State<QRScannerScreen> with WidgetsBindingObs
                   }
                 });
               } else {
-                errorMessage = 'Camera Error: ${error.errorDetails ?? error.errorCode.toString()}';
+                errorMessage = l10n.cameraStartError(error.errorDetails.toString());
                 if (error.errorCode == MobileScannerErrorCode.unsupported) {
-                  errorMessage = 'Camera is unavailable or not supported on this device.';
+                  errorMessage = l10n.cameraNotSupported;
                 }
               }
 
