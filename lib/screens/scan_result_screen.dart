@@ -208,7 +208,7 @@ class _ResultScreenState extends State<ResultScreen> {
     } catch (e) {
       _log.severe("Error launching URL: $e");
       if (mounted) {
-        _showSnackBar(l10n.genericErrorText('launching link', e.toString()));
+        _showSnackBar(l10n.urlLaunchError(e.toString()));
       }
     }
   }
@@ -530,19 +530,20 @@ class _ResultScreenState extends State<ResultScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     final ThemeData theme = Theme.of(context);
     final ColorScheme colorScheme = theme.colorScheme;
 
     IconData topIcon = Icons.check_circle;
     Color topIconColor = Colors.green;
-    String titleText = 'Scan Successful!';
+    String titleText = l10n.scanSuccessful;
     List<Widget> actionButtons = [];
 
     actionButtons.add(
       ElevatedButton.icon(
         icon: const Icon(Icons.copy),
-        label: const Text('Copy Raw Value'),
-        onPressed: () => _copyToClipboard(widget.code, 'Raw value copied!'),
+        label: Text(l10n.copyRawValue),
+        onPressed: () => _copyToClipboard(widget.code, l10n.rawValueCopied),
       )
     );
 
@@ -551,11 +552,11 @@ class _ResultScreenState extends State<ResultScreen> {
         if (_launchableUri != null) {
           topIcon = Icons.link;
           topIconColor = colorScheme.primary;
-          titleText = 'Link Found!';
+          titleText = l10n.linkFound;
           actionButtons.add(const SizedBox(height: 15));
           actionButtons.add(ElevatedButton.icon(
             icon: const Icon(Icons.open_in_browser),
-            label: const Text('Open Link'),
+            label: Text(l10n.openLink),
             onPressed: () => _launchUriAction(_launchableUri!),
             style: ElevatedButton.styleFrom(
               backgroundColor: colorScheme.secondary,
@@ -569,11 +570,11 @@ class _ResultScreenState extends State<ResultScreen> {
         if (_launchableUri != null) {
           topIcon = Icons.phone;
           topIconColor = colorScheme.primary;
-          titleText = 'Phone Number Found!';
+          titleText = l10n.phoneNumberFound;
           actionButtons.add(const SizedBox(height: 15));
           actionButtons.add(ElevatedButton.icon(
             icon: const Icon(Icons.phone_in_talk),
-            label: const Text('Dial Number'),
+            label: Text(l10n.dialNumber),
             onPressed: () => _launchUriAction(_launchableUri!),
             style: ElevatedButton.styleFrom(backgroundColor: Colors.green[700], foregroundColor: Colors.white),
           ));
@@ -584,11 +585,11 @@ class _ResultScreenState extends State<ResultScreen> {
         if (_launchableUri != null) {
           topIcon = Icons.email;
           topIconColor = colorScheme.primary;
-          titleText = 'Email Address Found!';
+          titleText = l10n.emailAddressFound;
           actionButtons.add(const SizedBox(height: 15));
           actionButtons.add(ElevatedButton.icon(
             icon: const Icon(Icons.email_outlined),
-            label: const Text('Send Email'),
+            label: Text(l10n.sendEmail),
             onPressed: () => _launchUriAction(_launchableUri!),
             style: ElevatedButton.styleFrom(backgroundColor: Colors.red[600], foregroundColor: Colors.white),
           ));
@@ -598,8 +599,8 @@ class _ResultScreenState extends State<ResultScreen> {
             actionButtons.add(const SizedBox(height: 10));
             actionButtons.add(ElevatedButton.icon(
               icon: const Icon(Icons.copy),
-              label: const Text('Copy Email Address'),
-              onPressed: () => _copyToClipboard(recipient, 'Email address copied!'),
+              label: Text(l10n.copyEmailAddress),
+              onPressed: () => _copyToClipboard(recipient, l10n.emailAddressCopied),
             ));
           }
         }
@@ -609,11 +610,11 @@ class _ResultScreenState extends State<ResultScreen> {
         if (_launchableUri != null) {
           topIcon = Icons.sms;
           topIconColor = colorScheme.primary;
-          titleText = 'SMS Details Found!';
+          titleText = l10n.smsDetailsFound;
           actionButtons.add(const SizedBox(height: 15));
           actionButtons.add(ElevatedButton.icon(
             icon: const Icon(Icons.sms_outlined),
-            label: const Text('Send SMS'),
+            label: Text(l10n.sendSms),
             onPressed: () => _launchUriAction(_launchableUri!),
             style: ElevatedButton.styleFrom(backgroundColor: Colors.deepPurple[600], foregroundColor: Colors.white),
           ));
@@ -624,18 +625,18 @@ class _ResultScreenState extends State<ResultScreen> {
         if (_wifiCredentials != null) {
           topIcon = Icons.wifi;
           topIconColor = colorScheme.primary;
-          titleText = 'Wi-Fi Network Found!';
+          titleText = l10n.wifiNetworkFound;
           actionButtons.add(const SizedBox(height: 15));
           actionButtons.add(ElevatedButton.icon(
             icon: const Icon(Icons.wifi_password),
-            label: const Text('Copy Wi-Fi Info'),
+            label: Text(l10n.copyWifiInfo),
             onPressed: _copyWifiCredentials,
             style: ElevatedButton.styleFrom(backgroundColor: Colors.blue[700], foregroundColor: Colors.white),
           ));
           actionButtons.add(Padding(
             padding: const EdgeInsets.only(top: 10.0),
             child: Text(
-              'Note: Paste copied info into Wi-Fi settings manually.',
+              l10n.wifiManualNote,
               textAlign: TextAlign.center,
               style: theme.textTheme.bodySmall?.copyWith(color: theme.colorScheme.onSurface.withAlpha(128)),
             ),
@@ -646,10 +647,10 @@ class _ResultScreenState extends State<ResultScreen> {
       case BarcodeType.contactInfo:
         topIcon = Icons.contact_page_outlined;
         topIconColor = colorScheme.primary;
-        titleText = 'Contact Info Found!';
+        titleText = l10n.contactInfoFound;
         actionButtons.add(ElevatedButton.icon(
           icon: const Icon(Icons.save_alt),
-          label: const Text('Export vCard (.vcf)'),
+          label: Text(l10n.exportVCard),
           onPressed: _exportVCard,
           style: ElevatedButton.styleFrom(backgroundColor: Colors.orange[700], foregroundColor: Colors.white),
         ));
@@ -658,11 +659,11 @@ class _ResultScreenState extends State<ResultScreen> {
       case BarcodeType.geo:
         topIcon = Icons.location_on_outlined;
         topIconColor = colorScheme.primary;
-        titleText = 'Location Found!';
+        titleText = l10n.locationFound;
         if (_launchableUri != null) {
           actionButtons.add(ElevatedButton.icon(
             icon: const Icon(Icons.map_outlined),
-            label: const Text('Open in Maps'),
+            label: Text(l10n.locationFound),
             onPressed: () => _launchUriAction(_launchableUri!),
             style: ElevatedButton.styleFrom(backgroundColor: Colors.teal[600], foregroundColor: Colors.white),
           ));
@@ -672,27 +673,27 @@ class _ResultScreenState extends State<ResultScreen> {
       case BarcodeType.calendarEvent:
         topIcon = Icons.event;
         topIconColor = colorScheme.primary;
-        titleText = 'Calendar Event Found!';
+        titleText = l10n.calendarEventFound;
         break;
       case BarcodeType.text:
         topIcon = Icons.article;
         topIconColor = colorScheme.primary;
-        titleText = 'Text Found';
+        titleText = l10n.textFound;
         break;
       case BarcodeType.isbn:
         topIcon = Icons.book;
         topIconColor = colorScheme.primary;
-        titleText = 'ISBN Found';
+        titleText = l10n.isbnFound;
         break;
       case BarcodeType.product:
         topIcon = Icons.inventory_2;
         topIconColor = colorScheme.primary;
-        titleText = 'Product Code Found';
+        titleText = l10n.productCodeFound;
         break;
       case BarcodeType.driverLicense:
         topIcon = Icons.badge;
         topIconColor = colorScheme.primary;
-        titleText = 'Driver License Found';
+        titleText = l10n.driverLicenseFound;
         break;
       case BarcodeType.unknown:
         break;
@@ -700,7 +701,7 @@ class _ResultScreenState extends State<ResultScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Scan Result'),
+        title: Text(l10n.scanResultTitle),
         leading: IconButton(
           icon: Icon(Icons.arrow_back, color: colorScheme.onPrimary),
           onPressed: () => Navigator.of(context).pop(),

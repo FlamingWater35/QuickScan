@@ -43,11 +43,175 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String couldNotPerformActionText(String uri) {
-    return 'Could not perform action for \"$uri\"';
+    return 'Could not perform action for $uri';
   }
 
   @override
-  String genericErrorText(String errorCause, String error) {
-    return 'Error \"$errorCause\": \"$error\"';
+  String urlLaunchError(String error) {
+    return 'Error launching link: $error';
   }
+
+  @override
+  String get scanResultTitle => 'Scan Result';
+
+  @override
+  String get scanSuccessful => 'Scan Successful!';
+
+  @override
+  String get copyRawValue => 'Copy Raw Value';
+
+  @override
+  String get rawValueCopied => 'Raw value copied!';
+
+  @override
+  String get linkFound => 'Link Found!';
+
+  @override
+  String get openLink => 'Open Link';
+
+  @override
+  String get phoneNumberFound => 'Phone Number Found!';
+
+  @override
+  String get dialNumber => 'Dial Number';
+
+  @override
+  String get emailAddressFound => 'Email Address Found!';
+
+  @override
+  String get sendEmail => 'Send Email';
+
+  @override
+  String get copyEmailAddress => 'Copy Email Address';
+
+  @override
+  String get emailAddressCopied => 'Email address copied!';
+
+  @override
+  String get smsDetailsFound => 'SMS Details Found!';
+
+  @override
+  String get sendSms => 'Send SMS';
+
+  @override
+  String get wifiNetworkFound => 'Wi-Fi Network Found!';
+
+  @override
+  String get copyWifiInfo => 'Copy Wi-Fi Info';
+
+  @override
+  String get wifiCredentialsCopied => 'Wi-Fi credentials copied to clipboard!';
+
+  @override
+  String get wifiManualNote => 'Note: Paste copied info into Wi-Fi settings manually.';
+
+  @override
+  String get contactInfoFound => 'Contact Info Found!';
+
+  @override
+  String get exportVCard => 'Export vCard (.vcf)';
+
+  @override
+  String get vCardSaved => 'vCard saved successfully!';
+
+  @override
+  String get vCardExportCancelled => 'vCard export cancelled or failed.';
+
+  @override
+  String vCardExportError(String error) {
+    return 'Error exporting vCard: $error';
+  }
+
+  @override
+  String get locationFound => 'Location Found!';
+
+  @override
+  String get openInMaps => 'Open in Maps';
+
+  @override
+  String get calendarEventFound => 'Calendar Event Found!';
+
+  @override
+  String get textFound => 'Text Found';
+
+  @override
+  String get isbnFound => 'ISBN Found';
+
+  @override
+  String get productCodeFound => 'Product Code Found';
+
+  @override
+  String get driverLicenseFound => 'Driver License Found';
+
+  @override
+  String get contactInfoLabel => 'Contact Info (vCard):';
+
+  @override
+  String get calendarEventLabel => 'Calendar Event (iCal):';
+
+  @override
+  String get driverLicenseLabel => 'Driver License Data:';
+
+  @override
+  String get rawDataLabel => 'Raw Data:';
+
+  @override
+  String get nameLabel => 'Name:';
+
+  @override
+  String get organizationLabel => 'Organization:';
+
+  @override
+  String get titleLabel => 'Title:';
+
+  @override
+  String get phoneLabel => 'Phone:';
+
+  @override
+  String get emailLabel => 'Email:';
+
+  @override
+  String get addressLabel => 'Address:';
+
+  @override
+  String get websiteLabel => 'Website:';
+
+  @override
+  String get noteLabel => 'Note:';
+
+  @override
+  String get ssidLabel => 'SSID:';
+
+  @override
+  String get typeLabel => 'Type:';
+
+  @override
+  String get passwordLabel => 'Password:';
+
+  @override
+  String get hiddenLabel => 'Hidden:';
+
+  @override
+  String get toLabel => 'To:';
+
+  @override
+  String get subjectLabel => 'Subject:';
+
+  @override
+  String get bodyLabel => 'Body:';
+
+  @override
+  String get latitudeLabel => 'Latitude:';
+
+  @override
+  String get longitudeLabel => 'Longitude:';
+
+  @override
+  String get altitudeLabel => 'Altitude:';
+
+  @override
+  String get labelLabel => 'Label:';
+
+  @override
+  String get noVCardData => 'No vCard data to export.';
 }

@@ -14,7 +14,7 @@
     "cameraPermissionPermanentlyDeniedText": "Camera permission is permanently denied. Please enable it in app settings to scan QR codes.",
     "openSettingsText": "Open Settings",
     "grantPermissionText": "Grant Permission",
-    "couldNotPerformActionText": "Could not perform action for \"{uri}\"",
+    "couldNotPerformActionText": "Could not perform action for {uri}",
     "@couldNotPerformActionText": {
         "placeholders": {
             "uri": {
@@ -23,17 +23,75 @@
             }
         }
     },
-    "genericErrorText": "Error \"{errorCause}\": \"{error}\"",
-    "@genericErrorText": {
+    "urlLaunchError": "Error launching link: {error}",
+    "@urlLaunchError": {
         "placeholders": {
-            "errorCause": {
-                "type": "String",
-                "example": "launching link"
-            },
             "error": {
                 "type": "String",
-                "example": "SystemError"
+                "example": "permission denied"
             }
         }
-    }
+    },
+    "scanResultTitle": "Scan Result",
+    "scanSuccessful": "Scan Successful!",
+    "copyRawValue": "Copy Raw Value",
+    "rawValueCopied": "Raw value copied!",
+    "linkFound": "Link Found!",
+    "openLink": "Open Link",
+    "phoneNumberFound": "Phone Number Found!",
+    "dialNumber": "Dial Number",
+    "emailAddressFound": "Email Address Found!",
+    "sendEmail": "Send Email",
+    "copyEmailAddress": "Copy Email Address",
+    "emailAddressCopied": "Email address copied!",
+    "smsDetailsFound": "SMS Details Found!",
+    "sendSms": "Send SMS",
+    "wifiNetworkFound": "Wi-Fi Network Found!",
+    "copyWifiInfo": "Copy Wi-Fi Info",
+    "wifiCredentialsCopied": "Wi-Fi credentials copied to clipboard!",
+    "wifiManualNote": "Note: Paste copied info into Wi-Fi settings manually.",
+    "contactInfoFound": "Contact Info Found!",
+    "exportVCard": "Export vCard (.vcf)",
+    "vCardSaved": "vCard saved successfully!",
+    "vCardExportCancelled": "vCard export cancelled or failed.",
+    "vCardExportError": "Error exporting vCard: {error}",
+    "@vCardExportError": {
+        "placeholders": {
+            "error": {
+                "type": "String",
+                "example": "permission denied"
+            }
+        }
+    },
+    "locationFound": "Location Found!",
+    "openInMaps": "Open in Maps",
+    "calendarEventFound": "Calendar Event Found!",
+    "textFound": "Text Found",
+    "isbnFound": "ISBN Found",
+    "productCodeFound": "Product Code Found",
+    "driverLicenseFound": "Driver License Found",
+    "contactInfoLabel": "Contact Info (vCard):",
+    "calendarEventLabel": "Calendar Event (iCal):",
+    "driverLicenseLabel": "Driver License Data:",
+    "rawDataLabel": "Raw Data:",
+    "nameLabel": "Name:",
+    "organizationLabel": "Organization:",
+    "titleLabel": "Title:",
+    "phoneLabel": "Phone:",
+    "emailLabel": "Email:",
+    "addressLabel": "Address:",
+    "websiteLabel": "Website:",
+    "noteLabel": "Note:",
+    "ssidLabel": "SSID:",
+    "typeLabel": "Type:",
+    "passwordLabel": "Password:",
+    "hiddenLabel": "Hidden:",
+    "toLabel": "To:",
+    "subjectLabel": "Subject:",
+    "bodyLabel": "Body:",
+    "latitudeLabel": "Latitude:",
+    "longitudeLabel": "Longitude:",
+    "altitudeLabel": "Altitude:",
+    "labelLabel": "Label:",
+    "noVCardData": "No vCard data to export."
 }

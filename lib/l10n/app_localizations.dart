@@ -164,14 +164,338 @@ abstract class AppLocalizations {
   /// No description provided for @couldNotPerformActionText.
   ///
   /// In en, this message translates to:
-  /// **'Could not perform action for \"{uri}\"'**
+  /// **'Could not perform action for {uri}'**
   String couldNotPerformActionText(String uri);
 
-  /// No description provided for @genericErrorText.
+  /// No description provided for @urlLaunchError.
   ///
   /// In en, this message translates to:
-  /// **'Error \"{errorCause}\": \"{error}\"'**
-  String genericErrorText(String errorCause, String error);
+  /// **'Error launching link: {error}'**
+  String urlLaunchError(String error);
+
+  /// No description provided for @scanResultTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Scan Result'**
+  String get scanResultTitle;
+
+  /// No description provided for @scanSuccessful.
+  ///
+  /// In en, this message translates to:
+  /// **'Scan Successful!'**
+  String get scanSuccessful;
+
+  /// No description provided for @copyRawValue.
+  ///
+  /// In en, this message translates to:
+  /// **'Copy Raw Value'**
+  String get copyRawValue;
+
+  /// No description provided for @rawValueCopied.
+  ///
+  /// In en, this message translates to:
+  /// **'Raw value copied!'**
+  String get rawValueCopied;
+
+  /// No description provided for @linkFound.
+  ///
+  /// In en, this message translates to:
+  /// **'Link Found!'**
+  String get linkFound;
+
+  /// No description provided for @openLink.
+  ///
+  /// In en, this message translates to:
+  /// **'Open Link'**
+  String get openLink;
+
+  /// No description provided for @phoneNumberFound.
+  ///
+  /// In en, this message translates to:
+  /// **'Phone Number Found!'**
+  String get phoneNumberFound;
+
+  /// No description provided for @dialNumber.
+  ///
+  /// In en, this message translates to:
+  /// **'Dial Number'**
+  String get dialNumber;
+
+  /// No description provided for @emailAddressFound.
+  ///
+  /// In en, this message translates to:
+  /// **'Email Address Found!'**
+  String get emailAddressFound;
+
+  /// No description provided for @sendEmail.
+  ///
+  /// In en, this message translates to:
+  /// **'Send Email'**
+  String get sendEmail;
+
+  /// No description provided for @copyEmailAddress.
+  ///
+  /// In en, this message translates to:
+  /// **'Copy Email Address'**
+  String get copyEmailAddress;
+
+  /// No description provided for @emailAddressCopied.
+  ///
+  /// In en, this message translates to:
+  /// **'Email address copied!'**
+  String get emailAddressCopied;
+
+  /// No description provided for @smsDetailsFound.
+  ///
+  /// In en, this message translates to:
+  /// **'SMS Details Found!'**
+  String get smsDetailsFound;
+
+  /// No description provided for @sendSms.
+  ///
+  /// In en, this message translates to:
+  /// **'Send SMS'**
+  String get sendSms;
+
+  /// No description provided for @wifiNetworkFound.
+  ///
+  /// In en, this message translates to:
+  /// **'Wi-Fi Network Found!'**
+  String get wifiNetworkFound;
+
+  /// No description provided for @copyWifiInfo.
+  ///
+  /// In en, this message translates to:
+  /// **'Copy Wi-Fi Info'**
+  String get copyWifiInfo;
+
+  /// No description provided for @wifiCredentialsCopied.
+  ///
+  /// In en, this message translates to:
+  /// **'Wi-Fi credentials copied to clipboard!'**
+  String get wifiCredentialsCopied;
+
+  /// No description provided for @wifiManualNote.
+  ///
+  /// In en, this message translates to:
+  /// **'Note: Paste copied info into Wi-Fi settings manually.'**
+  String get wifiManualNote;
+
+  /// No description provided for @contactInfoFound.
+  ///
+  /// In en, this message translates to:
+  /// **'Contact Info Found!'**
+  String get contactInfoFound;
+
+  /// No description provided for @exportVCard.
+  ///
+  /// In en, this message translates to:
+  /// **'Export vCard (.vcf)'**
+  String get exportVCard;
+
+  /// No description provided for @vCardSaved.
+  ///
+  /// In en, this message translates to:
+  /// **'vCard saved successfully!'**
+  String get vCardSaved;
+
+  /// No description provided for @vCardExportCancelled.
+  ///
+  /// In en, this message translates to:
+  /// **'vCard export cancelled or failed.'**
+  String get vCardExportCancelled;
+
+  /// No description provided for @vCardExportError.
+  ///
+  /// In en, this message translates to:
+  /// **'Error exporting vCard: {error}'**
+  String vCardExportError(String error);
+
+  /// No description provided for @locationFound.
+  ///
+  /// In en, this message translates to:
+  /// **'Location Found!'**
+  String get locationFound;
+
+  /// No description provided for @openInMaps.
+  ///
+  /// In en, this message translates to:
+  /// **'Open in Maps'**
+  String get openInMaps;
+
+  /// No description provided for @calendarEventFound.
+  ///
+  /// In en, this message translates to:
+  /// **'Calendar Event Found!'**
+  String get calendarEventFound;
+
+  /// No description provided for @textFound.
+  ///
+  /// In en, this message translates to:
+  /// **'Text Found'**
+  String get textFound;
+
+  /// No description provided for @isbnFound.
+  ///
+  /// In en, this message translates to:
+  /// **'ISBN Found'**
+  String get isbnFound;
+
+  /// No description provided for @productCodeFound.
+  ///
+  /// In en, this message translates to:
+  /// **'Product Code Found'**
+  String get productCodeFound;
+
+  /// No description provided for @driverLicenseFound.
+  ///
+  /// In en, this message translates to:
+  /// **'Driver License Found'**
+  String get driverLicenseFound;
+
+  /// No description provided for @contactInfoLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Contact Info (vCard):'**
+  String get contactInfoLabel;
+
+  /// No description provided for @calendarEventLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Calendar Event (iCal):'**
+  String get calendarEventLabel;
+
+  /// No description provided for @driverLicenseLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Driver License Data:'**
+  String get driverLicenseLabel;
+
+  /// No description provided for @rawDataLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Raw Data:'**
+  String get rawDataLabel;
+
+  /// No description provided for @nameLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Name:'**
+  String get nameLabel;
+
+  /// No description provided for @organizationLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Organization:'**
+  String get organizationLabel;
+
+  /// No description provided for @titleLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Title:'**
+  String get titleLabel;
+
+  /// No description provided for @phoneLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Phone:'**
+  String get phoneLabel;
+
+  /// No description provided for @emailLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Email:'**
+  String get emailLabel;
+
+  /// No description provided for @addressLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Address:'**
+  String get addressLabel;
+
+  /// No description provided for @websiteLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Website:'**
+  String get websiteLabel;
+
+  /// No description provided for @noteLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Note:'**
+  String get noteLabel;
+
+  /// No description provided for @ssidLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'SSID:'**
+  String get ssidLabel;
+
+  /// No description provided for @typeLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Type:'**
+  String get typeLabel;
+
+  /// No description provided for @passwordLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Password:'**
+  String get passwordLabel;
+
+  /// No description provided for @hiddenLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Hidden:'**
+  String get hiddenLabel;
+
+  /// No description provided for @toLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'To:'**
+  String get toLabel;
+
+  /// No description provided for @subjectLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Subject:'**
+  String get subjectLabel;
+
+  /// No description provided for @bodyLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Body:'**
+  String get bodyLabel;
+
+  /// No description provided for @latitudeLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Latitude:'**
+  String get latitudeLabel;
+
+  /// No description provided for @longitudeLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Longitude:'**
+  String get longitudeLabel;
+
+  /// No description provided for @altitudeLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Altitude:'**
+  String get altitudeLabel;
+
+  /// No description provided for @labelLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Label:'**
+  String get labelLabel;
+
+  /// No description provided for @noVCardData.
+  ///
+  /// In en, this message translates to:
+  /// **'No vCard data to export.'**
+  String get noVCardData;
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {
