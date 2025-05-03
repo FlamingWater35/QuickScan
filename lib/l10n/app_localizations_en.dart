@@ -270,4 +270,33 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get cameraNotSupported => 'Camera is unavailable or not supported on this device.';
+
+  @override
+  String get fileScreenTitle => 'Scan from File';
+
+  @override
+  String get pickImageButtonText => 'Pick Image & Scan';
+
+  @override
+  String get fileScreenInstruction => 'Select an image containing a QR code from your gallery.';
+
+  @override
+  String get chooseImageMessage => 'Choose an image...';
+
+  @override
+  String get processingMessage => 'Processing...';
+
+  @override
+  String get scanningImageMessage => 'Scanning image...';
+
+  @override
+  String get noCodeFoundMessage => 'No readable code found in the QR code.';
+
+  @override
+  String get noQrCodeFoundMessage => 'No QR code found in the selected image.';
+
+  @override
+  String imageScanError(String error) {
+    return 'Error scanning image: $error';
+  }
 }

@@ -604,6 +604,60 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Camera is unavailable or not supported on this device.'**
   String get cameraNotSupported;
+
+  /// Title for the file scanning screen
+  ///
+  /// In en, this message translates to:
+  /// **'Scan from File'**
+  String get fileScreenTitle;
+
+  /// Button text for selecting an image to scan
+  ///
+  /// In en, this message translates to:
+  /// **'Pick Image & Scan'**
+  String get pickImageButtonText;
+
+  /// Instruction text on the file scanning screen
+  ///
+  /// In en, this message translates to:
+  /// **'Select an image containing a QR code from your gallery.'**
+  String get fileScreenInstruction;
+
+  /// Loading message when selecting an image
+  ///
+  /// In en, this message translates to:
+  /// **'Choose an image...'**
+  String get chooseImageMessage;
+
+  /// Loading message while processing the image
+  ///
+  /// In en, this message translates to:
+  /// **'Processing...'**
+  String get processingMessage;
+
+  /// Loading message while scanning the image for QR codes
+  ///
+  /// In en, this message translates to:
+  /// **'Scanning image...'**
+  String get scanningImageMessage;
+
+  /// Message shown when a QR code is found but can't be read
+  ///
+  /// In en, this message translates to:
+  /// **'No readable code found in the QR code.'**
+  String get noCodeFoundMessage;
+
+  /// Message shown when no QR code is found in the image
+  ///
+  /// In en, this message translates to:
+  /// **'No QR code found in the selected image.'**
+  String get noQrCodeFoundMessage;
+
+  /// Error message when scanning an image fails
+  ///
+  /// In en, this message translates to:
+  /// **'Error scanning image: {error}'**
+  String imageScanError(String error);
 }
 
 class _AppLocalizationsDelegate extends LocalizationsDelegate<AppLocalizations> {

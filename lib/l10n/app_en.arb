@@ -363,5 +363,47 @@
     "cameraNotSupported": "Camera is unavailable or not supported on this device.",
     "@cameraNotSupported": {
         "description": "Error message shown when camera isn't detected"
+    },
+    "fileScreenTitle": "Scan from File",
+    "@fileScreenTitle": {
+        "description": "Title for the file scanning screen"
+    },
+    "pickImageButtonText": "Pick Image & Scan",
+    "@pickImageButtonText": {
+        "description": "Button text for selecting an image to scan"
+    },
+    "fileScreenInstruction": "Select an image containing a QR code from your gallery.",
+    "@fileScreenInstruction": {
+        "description": "Instruction text on the file scanning screen"
+    },
+    "chooseImageMessage": "Choose an image...",
+    "@chooseImageMessage": {
+        "description": "Loading message when selecting an image"
+    },
+    "processingMessage": "Processing...",
+    "@processingMessage": {
+        "description": "Loading message while processing the image"
+    },
+    "scanningImageMessage": "Scanning image...",
+    "@scanningImageMessage": {
+        "description": "Loading message while scanning the image for QR codes"
+    },
+    "noCodeFoundMessage": "No readable code found in the QR code.",
+    "@noCodeFoundMessage": {
+        "description": "Message shown when a QR code is found but can't be read"
+    },
+    "noQrCodeFoundMessage": "No QR code found in the selected image.",
+    "@noQrCodeFoundMessage": {
+        "description": "Message shown when no QR code is found in the image"
+    },
+    "imageScanError": "Error scanning image: {error}",
+    "@imageScanError": {
+        "description": "Error message when scanning an image fails",
+        "placeholders": {
+            "error": {
+                "type": "String",
+                "example": "File not found"
+            }
+        }
     }
 }

@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
 import 'package:logging/logging.dart';
+import 'package:simple_scanner/l10n/app_localizations.dart';
 
 import '/screens/scan_result_screen.dart';
 
@@ -29,12 +30,14 @@ class _FileScreenState extends State<FileScreen> {
   }
 
   Future<void> _pickAndScanImage() async {
+    final l10n = AppLocalizations.of(context);
+
     if (_isLoading) return;
 
     if (!mounted) return;
     setState(() {
       _isLoading = true;
-      _loadingMessage = "Choose an image...";
+      _loadingMessage = l10n.chooseImageMessage;
     });
 
     try {
@@ -52,14 +55,14 @@ class _FileScreenState extends State<FileScreen> {
       if (!mounted) return;
 
       setState(() {
-        _loadingMessage = "Processing...";
+        _loadingMessage = l10n.processingMessage;
       });
       await Future.delayed(const Duration(milliseconds: 300));
 
       if (!mounted) return;
 
       setState(() {
-        _loadingMessage = "Scanning image...";
+        _loadingMessage = l10n.scanningImageMessage;
       });
       final BarcodeCapture? capture = await _scannerController.analyzeImage(pickedFile.path);
 
@@ -78,15 +81,15 @@ class _FileScreenState extends State<FileScreen> {
             ),
           );
         } else {
-          _showSnackBar('No readable code found in the QR code.');
+          _showSnackBar(l10n.noCodeFoundMessage);
         }
       } else {
-        _showSnackBar('No QR code found in the selected image.');
+        _showSnackBar(l10n.noQrCodeFoundMessage);
       }
     } catch (e) {
       _log.severe('Error scanning image: $e');
       if (mounted) {
-        _showSnackBar('Error scanning image: ${e.toString()}');
+        _showSnackBar(l10n.imageScanError(e.toString()));
       }
     } finally {
       if (mounted) {
@@ -107,9 +110,11 @@ class _FileScreenState extends State<FileScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Scan from File'),
+        title: Text(l10n.fileScreenTitle),
       ),
       body: Center(
         child: Padding(
@@ -135,7 +140,7 @@ class _FileScreenState extends State<FileScreen> {
                   children: [
                     ElevatedButton.icon(
                       icon: const Icon(Icons.image_search),
-                      label: const Text('Pick Image & Scan'),
+                      label: Text(l10n.pickImageButtonText),
                       onPressed: _isLoading ? null : _pickAndScanImage,
                       style: ElevatedButton.styleFrom(
                         padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 15),
@@ -143,10 +148,10 @@ class _FileScreenState extends State<FileScreen> {
                       ),
                     ),
                     const SizedBox(height: 20),
-                    const Padding(
+                    Padding(
                       padding: EdgeInsets.symmetric(horizontal: 20.0),
                       child: Text(
-                        'Select an image containing a QR code from your gallery.',
+                        l10n.fileScreenInstruction,
                         textAlign: TextAlign.center,
                         style: TextStyle(color: Colors.grey),
                       ),
