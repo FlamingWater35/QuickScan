@@ -75,6 +75,8 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
         return l10n.englishLanguage;
       case 'es':
         return l10n.spanishLanguage;
+      case 'fi':
+        return l10n.finnishLanguage;
       case 'zh':
         return l10n.chineseLanguage;
       default:

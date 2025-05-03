@@ -16,6 +16,10 @@
     "@spanishLanguage": {
         "description": "The Spanish language"
     },
+    "finnishLanguage": "Finnish",
+    "@finnishLanguage": {
+        "description": "The Finnish language"
+    },
     "chineseLanguage": "Chinese",
     "@chineseLanguage": {
         "description": "The Chinese language"

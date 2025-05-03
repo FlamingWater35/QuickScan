@@ -21,6 +21,9 @@ class AppLocalizationsZh extends AppLocalizations {
   String get spanishLanguage => '西班牙语';
 
   @override
+  String get finnishLanguage => '芬兰';
+
+  @override
   String get chineseLanguage => '中文';
 
   @override
