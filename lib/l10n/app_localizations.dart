@@ -101,445 +101,445 @@ abstract class AppLocalizations {
   /// **'Simple Scanner'**
   String get appTitle;
 
-  /// No description provided for @scannerTabLabel.
+  /// Label for the camera tab in the app's navigation
   ///
   /// In en, this message translates to:
   /// **'Camera'**
   String get scannerTabLabel;
 
-  /// No description provided for @fileTabLabel.
+  /// Label for the file tab in the app's navigation
   ///
   /// In en, this message translates to:
   /// **'File'**
   String get fileTabLabel;
 
-  /// No description provided for @settingsTabLabel.
+  /// Label for the settings tab in the app's navigation
   ///
   /// In en, this message translates to:
   /// **'Settings'**
   String get settingsTabLabel;
 
-  /// No description provided for @scannerTabTitle.
+  /// Title displayed on the QR code scanning screen
   ///
   /// In en, this message translates to:
   /// **'Scan QR Code'**
   String get scannerTabTitle;
 
-  /// No description provided for @scannerTabScanText.
+  /// Instruction text shown on the QR code scanning screen
   ///
   /// In en, this message translates to:
   /// **'Align QR code within frame to scan'**
   String get scannerTabScanText;
 
-  /// No description provided for @cameraPermissionRequestText.
+  /// Message prompting the user to grant camera permission for scanning
   ///
   /// In en, this message translates to:
   /// **'Camera permission is required to scan QR codes. Please grant permission.'**
   String get cameraPermissionRequestText;
 
-  /// No description provided for @cameraPermissionRestrictedText.
+  /// Message shown when camera access is restricted by external policies
   ///
   /// In en, this message translates to:
   /// **'Camera access is restricted (e.g., by device policy or parental controls). Scanning is unavailable.'**
   String get cameraPermissionRestrictedText;
 
-  /// No description provided for @cameraPermissionPermanentlyDeniedText.
+  /// Message shown when camera permission is permanently denied, directing user to app settings
   ///
   /// In en, this message translates to:
   /// **'Camera permission is permanently denied. Please enable it in app settings to scan QR codes.'**
   String get cameraPermissionPermanentlyDeniedText;
 
-  /// No description provided for @openSettingsText.
+  /// Button text to open device settings for enabling permissions
   ///
   /// In en, this message translates to:
   /// **'Open Settings'**
   String get openSettingsText;
 
-  /// No description provided for @grantPermissionText.
+  /// Button text to request permission from the user
   ///
   /// In en, this message translates to:
   /// **'Grant Permission'**
   String get grantPermissionText;
 
-  /// No description provided for @couldNotPerformActionText.
+  /// Error message when an action fails for a given URI
   ///
   /// In en, this message translates to:
   /// **'Could not perform action for {uri}'**
   String couldNotPerformActionText(String uri);
 
-  /// No description provided for @urlLaunchError.
+  /// Error message when launching a URL fails
   ///
   /// In en, this message translates to:
   /// **'Error launching link: {error}'**
   String urlLaunchError(String error);
 
-  /// No description provided for @scanResultTitle.
+  /// Title for the scan result screen
   ///
   /// In en, this message translates to:
   /// **'Scan Result'**
   String get scanResultTitle;
 
-  /// No description provided for @scanSuccessful.
+  /// Message displayed when a QR code is successfully scanned
   ///
   /// In en, this message translates to:
   /// **'Scan Successful!'**
   String get scanSuccessful;
 
-  /// No description provided for @copyRawValue.
+  /// Button text to copy the raw data from a scanned QR code
   ///
   /// In en, this message translates to:
   /// **'Copy Raw Value'**
   String get copyRawValue;
 
-  /// No description provided for @rawValueCopied.
+  /// Confirmation message when raw QR code data is copied to clipboard
   ///
   /// In en, this message translates to:
   /// **'Raw value copied!'**
   String get rawValueCopied;
 
-  /// No description provided for @linkFound.
+  /// Message indicating a URL was found in the scanned QR code
   ///
   /// In en, this message translates to:
   /// **'Link Found!'**
   String get linkFound;
 
-  /// No description provided for @openLink.
+  /// Button text to open a URL found in the QR code
   ///
   /// In en, this message translates to:
   /// **'Open Link'**
   String get openLink;
 
-  /// No description provided for @phoneNumberFound.
+  /// Message indicating a phone number was found in the scanned QR code
   ///
   /// In en, this message translates to:
   /// **'Phone Number Found!'**
   String get phoneNumberFound;
 
-  /// No description provided for @dialNumber.
+  /// Button text to initiate a call to the phone number found
   ///
   /// In en, this message translates to:
   /// **'Dial Number'**
   String get dialNumber;
 
-  /// No description provided for @emailAddressFound.
+  /// Message indicating an email address was found in the scanned QR code
   ///
   /// In en, this message translates to:
   /// **'Email Address Found!'**
   String get emailAddressFound;
 
-  /// No description provided for @sendEmail.
+  /// Button text to compose an email to the found email address
   ///
   /// In en, this message translates to:
   /// **'Send Email'**
   String get sendEmail;
 
-  /// No description provided for @copyEmailAddress.
+  /// Button text to copy the email address to clipboard
   ///
   /// In en, this message translates to:
   /// **'Copy Email Address'**
   String get copyEmailAddress;
 
-  /// No description provided for @emailAddressCopied.
+  /// Confirmation message when the email address is copied to clipboard
   ///
   /// In en, this message translates to:
   /// **'Email address copied!'**
   String get emailAddressCopied;
 
-  /// No description provided for @smsDetailsFound.
+  /// Message indicating SMS details were found in the scanned QR code
   ///
   /// In en, this message translates to:
   /// **'SMS Details Found!'**
   String get smsDetailsFound;
 
-  /// No description provided for @sendSms.
+  /// Button text to send an SMS using the found details
   ///
   /// In en, this message translates to:
   /// **'Send SMS'**
   String get sendSms;
 
-  /// No description provided for @wifiNetworkFound.
+  /// Message indicating Wi-Fi network details were found in the scanned QR code
   ///
   /// In en, this message translates to:
   /// **'Wi-Fi Network Found!'**
   String get wifiNetworkFound;
 
-  /// No description provided for @copyWifiInfo.
+  /// Button text to copy Wi-Fi network credentials to clipboard
   ///
   /// In en, this message translates to:
   /// **'Copy Wi-Fi Info'**
   String get copyWifiInfo;
 
-  /// No description provided for @wifiCredentialsCopied.
+  /// Confirmation message when Wi-Fi credentials are copied
   ///
   /// In en, this message translates to:
   /// **'Wi-Fi credentials copied to clipboard!'**
   String get wifiCredentialsCopied;
 
-  /// No description provided for @wifiManualNote.
+  /// Instruction to manually paste Wi-Fi credentials into device settings
   ///
   /// In en, this message translates to:
   /// **'Note: Paste copied info into Wi-Fi settings manually.'**
   String get wifiManualNote;
 
-  /// No description provided for @contactInfoFound.
+  /// Message indicating contact information was found in the scanned QR code
   ///
   /// In en, this message translates to:
   /// **'Contact Info Found!'**
   String get contactInfoFound;
 
-  /// No description provided for @exportVCard.
+  /// Button text to export contact information as a vCard file
   ///
   /// In en, this message translates to:
   /// **'Export vCard (.vcf)'**
   String get exportVCard;
 
-  /// No description provided for @vCardSaved.
+  /// Confirmation message when a vCard is successfully saved
   ///
   /// In en, this message translates to:
   /// **'vCard saved successfully!'**
   String get vCardSaved;
 
-  /// No description provided for @vCardExportCancelled.
+  /// Message when vCard export is cancelled or fails
   ///
   /// In en, this message translates to:
   /// **'vCard export cancelled or failed.'**
   String get vCardExportCancelled;
 
-  /// No description provided for @vCardExportError.
+  /// Error message when vCard export fails
   ///
   /// In en, this message translates to:
   /// **'Error exporting vCard: {error}'**
   String vCardExportError(String error);
 
-  /// No description provided for @locationFound.
+  /// Message indicating geographic coordinates were found in the scanned QR code
   ///
   /// In en, this message translates to:
   /// **'Location Found!'**
   String get locationFound;
 
-  /// No description provided for @openInMaps.
+  /// Button text to open the found location in a maps application
   ///
   /// In en, this message translates to:
   /// **'Open in Maps'**
   String get openInMaps;
 
-  /// No description provided for @calendarEventFound.
+  /// Message indicating a calendar event was found in the scanned QR code
   ///
   /// In en, this message translates to:
   /// **'Calendar Event Found!'**
   String get calendarEventFound;
 
-  /// No description provided for @textFound.
+  /// Message indicating plain text was found in the scanned QR code
   ///
   /// In en, this message translates to:
   /// **'Text Found'**
   String get textFound;
 
-  /// No description provided for @isbnFound.
+  /// Message indicating an ISBN was found in the scanned QR code
   ///
   /// In en, this message translates to:
   /// **'ISBN Found'**
   String get isbnFound;
 
-  /// No description provided for @productCodeFound.
+  /// Message indicating a product code was found in the scanned QR code
   ///
   /// In en, this message translates to:
   /// **'Product Code Found'**
   String get productCodeFound;
 
-  /// No description provided for @driverLicenseFound.
+  /// Message indicating driver license data was found in the scanned QR code
   ///
   /// In en, this message translates to:
   /// **'Driver License Found'**
   String get driverLicenseFound;
 
-  /// No description provided for @contactInfoLabel.
+  /// Label for contact information section in scan results
   ///
   /// In en, this message translates to:
   /// **'Contact Info (vCard):'**
   String get contactInfoLabel;
 
-  /// No description provided for @saveContactDialogTitle.
+  /// Title for the dialog to save contact information
   ///
   /// In en, this message translates to:
   /// **'Save Contact'**
   String get saveContactDialogTitle;
 
-  /// No description provided for @noneLabel.
+  /// Label used when no data is available for a field
   ///
   /// In en, this message translates to:
   /// **'(none)'**
   String get noneLabel;
 
-  /// No description provided for @calendarEventLabel.
+  /// Label for calendar event section in scan results
   ///
   /// In en, this message translates to:
   /// **'Calendar Event (iCal):'**
   String get calendarEventLabel;
 
-  /// No description provided for @driverLicenseLabel.
+  /// Label for driver license data section in scan results
   ///
   /// In en, this message translates to:
   /// **'Driver License Data:'**
   String get driverLicenseLabel;
 
-  /// No description provided for @rawDataLabel.
+  /// Label for raw QR code data section in scan results
   ///
   /// In en, this message translates to:
   /// **'Raw Data:'**
   String get rawDataLabel;
 
-  /// No description provided for @nameLabel.
+  /// Label for name field in contact information
   ///
   /// In en, this message translates to:
   /// **'Name:'**
   String get nameLabel;
 
-  /// No description provided for @organizationLabel.
+  /// Label for organization field in contact information
   ///
   /// In en, this message translates to:
   /// **'Organization:'**
   String get organizationLabel;
 
-  /// No description provided for @titleLabel.
+  /// Label for job title field in contact information
   ///
   /// In en, this message translates to:
   /// **'Title:'**
   String get titleLabel;
 
-  /// No description provided for @phoneLabel.
+  /// Label for phone number field in contact information
   ///
   /// In en, this message translates to:
   /// **'Phone:'**
   String get phoneLabel;
 
-  /// No description provided for @emailLabel.
+  /// Label for email address field in contact information
   ///
   /// In en, this message translates to:
   /// **'Email:'**
   String get emailLabel;
 
-  /// No description provided for @addressLabel.
+  /// Label for address field in contact information
   ///
   /// In en, this message translates to:
   /// **'Address:'**
   String get addressLabel;
 
-  /// No description provided for @websiteLabel.
+  /// Label for website field in contact information
   ///
   /// In en, this message translates to:
   /// **'Website:'**
   String get websiteLabel;
 
-  /// No description provided for @noteLabel.
+  /// Label for note field in contact information
   ///
   /// In en, this message translates to:
   /// **'Note:'**
   String get noteLabel;
 
-  /// No description provided for @wifiNetworkLabel.
+  /// Label for Wi-Fi network section in scan results
   ///
   /// In en, this message translates to:
   /// **'Wi-Fi Network:'**
   String get wifiNetworkLabel;
 
-  /// No description provided for @ssidLabel.
+  /// Label for Wi-Fi network SSID field
   ///
   /// In en, this message translates to:
   /// **'SSID:'**
   String get ssidLabel;
 
-  /// No description provided for @typeLabel.
+  /// Label for Wi-Fi network type field
   ///
   /// In en, this message translates to:
   /// **'Type:'**
   String get typeLabel;
 
-  /// No description provided for @passwordLabel.
+  /// Label for Wi-Fi network password field
   ///
   /// In en, this message translates to:
   /// **'Password:'**
   String get passwordLabel;
 
-  /// No description provided for @noPasswordLabel.
+  /// Label used when no Wi-Fi password is provided
   ///
   /// In en, this message translates to:
   /// **'N/A (maybe no password)'**
   String get noPasswordLabel;
 
-  /// No description provided for @hiddenLabel.
+  /// Label for Wi-Fi network hidden status field
   ///
   /// In en, this message translates to:
   /// **'Hidden:'**
   String get hiddenLabel;
 
-  /// No description provided for @toLabel.
+  /// Label for recipient field in SMS or email details
   ///
   /// In en, this message translates to:
   /// **'To:'**
   String get toLabel;
 
-  /// No description provided for @subjectLabel.
+  /// Label for subject field in email or calendar event
   ///
   /// In en, this message translates to:
   /// **'Subject:'**
   String get subjectLabel;
 
-  /// No description provided for @bodyLabel.
+  /// Label for body field in SMS or email details
   ///
   /// In en, this message translates to:
   /// **'Body:'**
   String get bodyLabel;
 
-  /// No description provided for @latitudeLabel.
+  /// Label for latitude field in location data
   ///
   /// In en, this message translates to:
   /// **'Latitude:'**
   String get latitudeLabel;
 
-  /// No description provided for @longitudeLabel.
+  /// Label for longitude field in location data
   ///
   /// In en, this message translates to:
   /// **'Longitude:'**
   String get longitudeLabel;
 
-  /// No description provided for @altitudeLabel.
+  /// Label for altitude field in location data
   ///
   /// In en, this message translates to:
   /// **'Altitude:'**
   String get altitudeLabel;
 
-  /// No description provided for @labelLabel.
+  /// Label for generic label field in scan results
   ///
   /// In en, this message translates to:
   /// **'Label:'**
   String get labelLabel;
 
-  /// No description provided for @noVCardData.
+  /// Message shown when there is no vCard data available to export
   ///
   /// In en, this message translates to:
   /// **'No vCard data to export.'**
   String get noVCardData;
 
-  /// No description provided for @hidePasswordTooltip.
+  /// Tooltip text for hiding Wi-Fi password
   ///
   /// In en, this message translates to:
   /// **'Hide password'**
   String get hidePasswordTooltip;
 
-  /// No description provided for @showPasswordTooltip.
+  /// Tooltip text for showing Wi-Fi password
   ///
   /// In en, this message translates to:
   /// **'Show password'**
   String get showPasswordTooltip;
 
-  /// No description provided for @yesLabel.
+  /// Label for affirmative response
   ///
   /// In en, this message translates to:
   /// **'Yes'**
   String get yesLabel;
 
-  /// No description provided for @noLabel.
+  /// Label for negative response
   ///
   /// In en, this message translates to:
   /// **'No'**

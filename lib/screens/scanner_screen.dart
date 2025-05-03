@@ -651,5 +651,4 @@ class QRScannerScreenState extends State<QRScannerScreen> with WidgetsBindingObs
       ),
     );
   }
-
 }

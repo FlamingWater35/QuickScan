@@ -38,7 +38,8 @@ dependencies:
   # Data management
   shared_preferences: ^2.5.3
   flutter_riverpod: ^2.6.1
-  flutter_localization: ^0.3.2
+  flutter_localizations:
+    sdk: flutter
 
   # Utility
   mobile_scanner: ^6.0.10

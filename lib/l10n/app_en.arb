@@ -5,17 +5,48 @@
         "description": "The title of the application"
     },
     "scannerTabLabel": "Camera",
+    "@scannerTabLabel": {
+        "description": "Label for the camera tab in the app's navigation"
+    },
     "fileTabLabel": "File",
+    "@fileTabLabel": {
+        "description": "Label for the file tab in the app's navigation"
+    },
     "settingsTabLabel": "Settings",
+    "@settingsTabLabel": {
+        "description": "Label for the settings tab in the app's navigation"
+    },
     "scannerTabTitle": "Scan QR Code",
+    "@scannerTabTitle": {
+        "description": "Title displayed on the QR code scanning screen"
+    },
     "scannerTabScanText": "Align QR code within frame to scan",
+    "@scannerTabScanText": {
+        "description": "Instruction text shown on the QR code scanning screen"
+    },
     "cameraPermissionRequestText": "Camera permission is required to scan QR codes. Please grant permission.",
+    "@cameraPermissionRequestText": {
+        "description": "Message prompting the user to grant camera permission for scanning"
+    },
     "cameraPermissionRestrictedText": "Camera access is restricted (e.g., by device policy or parental controls). Scanning is unavailable.",
+    "@cameraPermissionRestrictedText": {
+        "description": "Message shown when camera access is restricted by external policies"
+    },
     "cameraPermissionPermanentlyDeniedText": "Camera permission is permanently denied. Please enable it in app settings to scan QR codes.",
+    "@cameraPermissionPermanentlyDeniedText": {
+        "description": "Message shown when camera permission is permanently denied, directing user to app settings"
+    },
     "openSettingsText": "Open Settings",
+    "@openSettingsText": {
+        "description": "Button text to open device settings for enabling permissions"
+    },
     "grantPermissionText": "Grant Permission",
+    "@grantPermissionText": {
+        "description": "Button text to request permission from the user"
+    },
     "couldNotPerformActionText": "Could not perform action for {uri}",
     "@couldNotPerformActionText": {
+        "description": "Error message when an action fails for a given URI",
         "placeholders": {
             "uri": {
                 "type": "String",
@@ -25,6 +56,7 @@
     },
     "urlLaunchError": "Error launching link: {error}",
     "@urlLaunchError": {
+        "description": "Error message when launching a URL fails",
         "placeholders": {
             "error": {
                 "type": "String",
@@ -33,29 +65,96 @@
         }
     },
     "scanResultTitle": "Scan Result",
+    "@scanResultTitle": {
+        "description": "Title for the scan result screen"
+    },
     "scanSuccessful": "Scan Successful!",
+    "@scanSuccessful": {
+        "description": "Message displayed when a QR code is successfully scanned"
+    },
     "copyRawValue": "Copy Raw Value",
+    "@copyRawValue": {
+        "description": "Button text to copy the raw data from a scanned QR code"
+    },
     "rawValueCopied": "Raw value copied!",
+    "@rawValueCopied": {
+        "description": "Confirmation message when raw QR code data is copied to clipboard"
+    },
     "linkFound": "Link Found!",
+    "@linkFound": {
+        "description": "Message indicating a URL was found in the scanned QR code"
+    },
     "openLink": "Open Link",
+    "@openLink": {
+        "description": "Button text to open a URL found in the QR code"
+    },
     "phoneNumberFound": "Phone Number Found!",
+    "@phoneNumberFound": {
+        "description": "Message indicating a phone number was found in the scanned QR code"
+    },
     "dialNumber": "Dial Number",
+    "@dialNumber": {
+        "description": "Button text to initiate a call to the phone number found"
+    },
     "emailAddressFound": "Email Address Found!",
+    "@emailAddressFound": {
+        "description": "Message indicating an email address was found in the scanned QR code"
+    },
     "sendEmail": "Send Email",
+    "@sendEmail": {
+        "description": "Button text to compose an email to the found email address"
+    },
     "copyEmailAddress": "Copy Email Address",
+    "@copyEmailAddress": {
+        "description": "Button text to copy the email address to clipboard"
+    },
     "emailAddressCopied": "Email address copied!",
+    "@emailAddressCopied": {
+        "description": "Confirmation message when the email address is copied to clipboard"
+    },
     "smsDetailsFound": "SMS Details Found!",
+    "@smsDetailsFound": {
+        "description": "Message indicating SMS details were found in the scanned QR code"
+    },
     "sendSms": "Send SMS",
+    "@sendSms": {
+        "description": "Button text to send an SMS using the found details"
+    },
     "wifiNetworkFound": "Wi-Fi Network Found!",
+    "@wifiNetworkFound": {
+        "description": "Message indicating Wi-Fi network details were found in the scanned QR code"
+    },
     "copyWifiInfo": "Copy Wi-Fi Info",
+    "@copyWifiInfo": {
+        "description": "Button text to copy Wi-Fi network credentials to clipboard"
+    },
     "wifiCredentialsCopied": "Wi-Fi credentials copied to clipboard!",
+    "@wifiCredentialsCopied": {
+        "description": "Confirmation message when Wi-Fi credentials are copied"
+    },
     "wifiManualNote": "Note: Paste copied info into Wi-Fi settings manually.",
+    "@wifiManualNote": {
+        "description": "Instruction to manually paste Wi-Fi credentials into device settings"
+    },
     "contactInfoFound": "Contact Info Found!",
+    "@contactInfoFound": {
+        "description": "Message indicating contact information was found in the scanned QR code"
+    },
     "exportVCard": "Export vCard (.vcf)",
+    "@exportVCard": {
+        "description": "Button text to export contact information as a vCard file"
+    },
     "vCardSaved": "vCard saved successfully!",
+    "@vCardSaved": {
+        "description": "Confirmation message when a vCard is successfully saved"
+    },
     "vCardExportCancelled": "vCard export cancelled or failed.",
+    "@vCardExportCancelled": {
+        "description": "Message when vCard export is cancelled or fails"
+    },
     "vCardExportError": "Error exporting vCard: {error}",
     "@vCardExportError": {
+        "description": "Error message when vCard export fails",
         "placeholders": {
             "error": {
                 "type": "String",
@@ -64,42 +163,159 @@
         }
     },
     "locationFound": "Location Found!",
+    "@locationFound": {
+        "description": "Message indicating geographic coordinates were found in the scanned QR code"
+    },
     "openInMaps": "Open in Maps",
+    "@openInMaps": {
+        "description": "Button text to open the found location in a maps application"
+    },
     "calendarEventFound": "Calendar Event Found!",
+    "@calendarEventFound": {
+        "description": "Message indicating a calendar event was found in the scanned QR code"
+    },
     "textFound": "Text Found",
+    "@textFound": {
+        "description": "Message indicating plain text was found in the scanned QR code"
+    },
     "isbnFound": "ISBN Found",
+    "@isbnFound": {
+        "description": "Message indicating an ISBN was found in the scanned QR code"
+    },
     "productCodeFound": "Product Code Found",
+    "@productCodeFound": {
+        "description": "Message indicating a product code was found in the scanned QR code"
+    },
     "driverLicenseFound": "Driver License Found",
+    "@driverLicenseFound": {
+        "description": "Message indicating driver license data was found in the scanned QR code"
+    },
     "contactInfoLabel": "Contact Info (vCard):",
+    "@contactInfoLabel": {
+        "description": "Label for contact information section in scan results"
+    },
     "saveContactDialogTitle": "Save Contact",
+    "@saveContactDialogTitle": {
+        "description": "Title for the dialog to save contact information"
+    },
     "noneLabel": "(none)",
+    "@noneLabel": {
+        "description": "Label used when no data is available for a field"
+    },
     "calendarEventLabel": "Calendar Event (iCal):",
+    "@calendarEventLabel": {
+        "description": "Label for calendar event section in scan results"
+    },
     "driverLicenseLabel": "Driver License Data:",
+    "@driverLicenseLabel": {
+        "description": "Label for driver license data section in scan results"
+    },
     "rawDataLabel": "Raw Data:",
+    "@rawDataLabel": {
+        "description": "Label for raw QR code data section in scan results"
+    },
     "nameLabel": "Name:",
+    "@nameLabel": {
+        "description": "Label for name field in contact information"
+    },
     "organizationLabel": "Organization:",
+    "@organizationLabel": {
+        "description": "Label for organization field in contact information"
+    },
     "titleLabel": "Title:",
+    "@titleLabel": {
+        "description": "Label for job title field in contact information"
+    },
     "phoneLabel": "Phone:",
+    "@phoneLabel": {
+        "description": "Label for phone number field in contact information"
+    },
     "emailLabel": "Email:",
+    "@emailLabel": {
+        "description": "Label for email address field in contact information"
+    },
     "addressLabel": "Address:",
+    "@addressLabel": {
+        "description": "Label for address field in contact information"
+    },
     "websiteLabel": "Website:",
+    "@websiteLabel": {
+        "description": "Label for website field in contact information"
+    },
     "noteLabel": "Note:",
+    "@noteLabel": {
+        "description": "Label for note field in contact information"
+    },
     "wifiNetworkLabel": "Wi-Fi Network:",
+    "@wifiNetworkLabel": {
+        "description": "Label for Wi-Fi network section in scan results"
+    },
     "ssidLabel": "SSID:",
+    "@ssidLabel": {
+        "description": "Label for Wi-Fi network SSID field"
+    },
     "typeLabel": "Type:",
+    "@typeLabel": {
+        "description": "Label for Wi-Fi network type field"
+    },
     "passwordLabel": "Password:",
+    "@passwordLabel": {
+        "description": "Label for Wi-Fi network password field"
+    },
     "noPasswordLabel": "N/A (maybe no password)",
+    "@noPasswordLabel": {
+        "description": "Label used when no Wi-Fi password is provided"
+    },
     "hiddenLabel": "Hidden:",
+    "@hiddenLabel": {
+        "description": "Label for Wi-Fi network hidden status field"
+    },
     "toLabel": "To:",
+    "@toLabel": {
+        "description": "Label for recipient field in SMS or email details"
+    },
     "subjectLabel": "Subject:",
+    "@subjectLabel": {
+        "description": "Label for subject field in email or calendar event"
+    },
     "bodyLabel": "Body:",
+    "@bodyLabel": {
+        "description": "Label for body field in SMS or email details"
+    },
     "latitudeLabel": "Latitude:",
+    "@latitudeLabel": {
+        "description": "Label for latitude field in location data"
+    },
     "longitudeLabel": "Longitude:",
+    "@longitudeLabel": {
+        "description": "Label for longitude field in location data"
+    },
     "altitudeLabel": "Altitude:",
+    "@altitudeLabel": {
+        "description": "Label for altitude field in location data"
+    },
     "labelLabel": "Label:",
+    "@labelLabel": {
+        "description": "Label for generic label field in scan results"
+    },
     "noVCardData": "No vCard data to export.",
+    "@noVCardData": {
+        "description": "Message shown when there is no vCard data available to export"
+    },
     "hidePasswordTooltip": "Hide password",
+    "@hidePasswordTooltip": {
+        "description": "Tooltip text for hiding Wi-Fi password"
+    },
     "showPasswordTooltip": "Show password",
+    "@showPasswordTooltip": {
+        "description": "Tooltip text for showing Wi-Fi password"
+    },
     "yesLabel": "Yes",
-    "noLabel": "No"
+    "@yesLabel": {
+        "description": "Label for affirmative response"
+    },
+    "noLabel": "No",
+    "@noLabel": {
+        "description": "Label for negative response"
+    }
 }
