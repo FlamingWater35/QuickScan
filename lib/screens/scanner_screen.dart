@@ -4,6 +4,7 @@ import 'package:mobile_scanner/mobile_scanner.dart';
 import 'package:logging/logging.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:simple_scanner/l10n/app_localizations.dart';
+import 'package:wakelock_plus/wakelock_plus.dart';
 
 import 'scan_result_screen.dart';
 
@@ -37,6 +38,24 @@ class QRScannerScreenState extends State<QRScannerScreen> with WidgetsBindingObs
         _checkPermissionAndInitialize();
       }
     });
+  }
+
+  Future<void> enableKeepAwake() async {
+    try {
+      await WakelockPlus.enable();
+      _log.fine("Wakelock explicitly enabled by external request.");
+    } catch (e, s) {
+      _log.severe("Error enabling wakelock: $e", e, s);
+    }
+  }
+
+  Future<void> disableKeepAwake() async {
+    try {
+      await WakelockPlus.disable();
+      _log.fine("Wakelock explicitly disabled by external request.");
+    } catch (e, s) {
+      _log.severe("Error disabling wakelock: $e", e, s);
+    }
   }
 
   Future<void> _checkPermissionAndInitialize() async {
@@ -218,6 +237,8 @@ class QRScannerScreenState extends State<QRScannerScreen> with WidgetsBindingObs
             _log.fine("Stopping scanner before navigation...");
             await controller.stop();
           }
+          _log.fine("Disabling wakelock before navigation.");
+          await WakelockPlus.disable();
         } catch (e, s) {
           _log.severe("Error stopping scanner before navigation: $e", e, s);
         }
@@ -235,10 +256,18 @@ class QRScannerScreenState extends State<QRScannerScreen> with WidgetsBindingObs
 
         if (mounted) {
           _log.fine("Returned from ResultScreen.");
+          try {
+            _log.fine("Re-enabling wakelock after returning.");
+            await WakelockPlus.enable();
+          } catch (e, s) {
+            _log.severe("Error enabling wakelock after returning: $e", e, s);
+          }
+
           setState(() {
             _isNavigating = false;
           });
           await Future.delayed(const Duration(milliseconds: 200));
+
           if (mounted && !_isCameraExplicitlyStopped) {
             _log.fine("Attempting to resume scanner after returning.");
             final currentStatus = await Permission.camera.status;
@@ -393,9 +422,11 @@ class QRScannerScreenState extends State<QRScannerScreen> with WidgetsBindingObs
   @override
   Future<void> dispose() async {
     _log.fine("QRScannerScreenState: Disposing...");
+
     WidgetsBinding.instance.removeObserver(this);
     await _subscription?.cancel();
     _subscription = null;
+
     try {
       if (controller.value.isRunning) {
         await controller.stop();
@@ -404,6 +435,13 @@ class QRScannerScreenState extends State<QRScannerScreen> with WidgetsBindingObs
       _log.warning("Error stopping controller during dispose: $e");
     }
     await controller.dispose();
+
+    try {
+      await WakelockPlus.disable();
+      _log.fine("QRScannerScreenState: Wakelock disabled on dispose.");
+    } catch (e,s) {
+      _log.severe("Error disabling wakelock during dispose: $e", e, s);
+    }
     _log.fine("QRScannerScreenState: Disposed.");
     super.dispose();
   }

@@ -31,9 +31,21 @@ class _MainScreenState extends State<MainScreen> {
     ];
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (_selectedIndex == 0) {
-        _log.fine("MainScreen initState: Initial screen is Camera, starting scanner.");
-        _qrScannerScreenKey.currentState?.startCamera();
+      if (mounted) {
+        final qrScannerState = _qrScannerScreenKey.currentState;
+        if (qrScannerState == null) {
+          _log.warning("initState: QRScannerScreenState is null after build!");
+          return;
+        }
+
+        if (_selectedIndex == 0) {
+          _log.fine("MainScreen initState: Initial screen is Camera, starting scanner AND enabling wakelock.");
+          qrScannerState.startCamera();
+          qrScannerState.enableKeepAwake();
+        } else {
+          _log.fine("MainScreen initState: Initial screen is NOT Camera. Ensuring wakelock is off.");
+          qrScannerState.disableKeepAwake();
+        }
       }
     });
   }
@@ -42,20 +54,30 @@ class _MainScreenState extends State<MainScreen> {
     _previousIndex = _selectedIndex;
     if (_previousIndex == index) return;
 
-    setState(() {
-      _selectedIndex = index;
-    });
+    final qrScannerState = _qrScannerScreenKey.currentState;
+
+    if (qrScannerState == null) {
+      _log.warning("onItemTapped: QRScannerScreenState is null! Cannot control scanner/wakelock.");
+      setState(() { _selectedIndex = index; });
+      return;
+    }
 
     _log.fine("MainScreen: Switched tab from $_previousIndex to $_selectedIndex");
 
     if (_previousIndex == 0 && index != 0) {
-      _log.fine("MainScreen: Switched away from Camera, stopping scanner.");
-      _qrScannerScreenKey.currentState?.stopCamera();
+      _log.fine("MainScreen: Switched away from Camera Tab. Stopping scanner AND disabling wakelock.");
+      qrScannerState.stopCamera();
+      qrScannerState.disableKeepAwake();
     }
     else if (_previousIndex != 0 && index == 0) {
-      _log.fine("MainScreen: Switched to Camera, starting scanner.");
-      _qrScannerScreenKey.currentState?.startCamera();
+      _log.fine("MainScreen: Switched to Camera Tab. Starting scanner AND enabling wakelock.");
+      qrScannerState.startCamera();
+      qrScannerState.enableKeepAwake();
     }
+
+    setState(() {
+      _selectedIndex = index;
+    });
   }
 
   @override
