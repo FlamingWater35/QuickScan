@@ -104,6 +104,10 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
 
     showModalBottomSheet(
       context: context,
+      isScrollControlled: true,
+      constraints: BoxConstraints(
+        maxHeight: MediaQuery.of(context).size.height * 0.6,
+      ),
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(20.0)),
       ),
@@ -112,50 +116,68 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
           builder: (context, sheetRef, child) {
             final currentLocaleInSheet = sheetRef.watch(localeProvider);
 
-            return Padding(
-              padding: const EdgeInsets.symmetric(vertical: 16.0, horizontal: 8.0),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: <Widget>[
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
-                    child: Text(
-                      l10n.languageSectionTitle,
-                      style: theme.textTheme.titleLarge?.copyWith(
-                        fontWeight: FontWeight.bold,
+            void handleLocaleSelection(Locale? newLocale) {
+              if (newLocale != null && newLocale != currentLocaleInSheet) {
+                _log.info("Language selected in sheet: ${newLocale.languageCode}");
+                ref.read(localeProvider.notifier).setLocale(newLocale);
+                Navigator.pop(bottomSheetContext);
+              }
+            }
+
+            return SafeArea(
+              child: Padding(
+                padding: const EdgeInsets.symmetric(vertical: 16.0, horizontal: 8.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: <Widget>[
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+                      child: Text(
+                        l10n.languageSectionTitle,
+                        style: theme.textTheme.titleLarge?.copyWith(
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
                     ),
-                  ),
-                  const SizedBox(height: 8),
-                  const Divider(height: 1),
-                  const SizedBox(height: 8),
-                  Flexible(
-                    child: ListView(
-                      shrinkWrap: true,
-                      children: supportedLocales.map((locale) {
-                        final languageName = _getLanguageName(locale, l10n);
-                        return RadioListTile<Locale>(
-                          title: Text(languageName),
-                          value: locale,
-                          groupValue: currentLocaleInSheet,
-                          onChanged: (Locale? newLocale) {
-                            if (newLocale != null) {
-                              _log.info("Language selected in sheet: ${newLocale.languageCode}");
-                              ref
-                                .read(localeProvider.notifier)
-                                .setLocale(newLocale);
-                              Navigator.pop(bottomSheetContext);
-                            }
-                          },
-                          visualDensity: VisualDensity.compact,
-                          controlAffinity: ListTileControlAffinity.trailing,
-                          activeColor: theme.colorScheme.primary,
-                        );
-                      }).toList(),
+                    const SizedBox(height: 4),
+                    const Divider(height: 1),
+                    const SizedBox(height: 12),
+
+                    Expanded(
+                      child: Container(
+                        margin: const EdgeInsets.symmetric(horizontal: 8.0),
+                        padding: const EdgeInsets.symmetric(vertical: 8.0),
+                        decoration: BoxDecoration(
+                          color: theme.colorScheme.surfaceContainerHighest,
+                          borderRadius: BorderRadius.circular(12.0),
+                        ),
+                        clipBehavior: Clip.antiAlias,
+                        child: ListView(
+                          padding: EdgeInsets.zero,
+                          children: supportedLocales.map((locale) {
+                            final languageName = _getLanguageName(locale, l10n);
+                            final bool isSelected = locale == currentLocaleInSheet;
+
+                            return ListTile(
+                              title: Text(languageName),
+                              leading: Radio<Locale>(
+                                value: locale,
+                                groupValue: currentLocaleInSheet,
+                                onChanged: handleLocaleSelection,
+                                activeColor: theme.colorScheme.primary,
+                                visualDensity: VisualDensity.compact,
+                              ),
+                              selected: isSelected,
+                              contentPadding: const EdgeInsets.symmetric(horizontal: 16.0),
+                              visualDensity: VisualDensity.compact,
+                              onTap: () => handleLocaleSelection(locale),
+                            );
+                          }).toList(),
+                        ),
+                      ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
             );
           }
