@@ -71,12 +71,18 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
 
   String _getLanguageName(Locale locale, AppLocalizations l10n) {
     switch (locale.languageCode) {
+      case 'ar':
+        return 'عربي';
       case 'en':
         return 'English';
       case 'es':
         return 'Español';
       case 'fi':
         return 'Suomi';
+      case 'fr':
+        return 'français';
+      case 'id':
+        return 'Indonesia';
       case 'zh':
         return '中文';
       default:
