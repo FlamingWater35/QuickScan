@@ -15,18 +15,6 @@ class AppLocalizationsEs extends AppLocalizations {
   String get languageSectionTitle => 'Idioma';
 
   @override
-  String get englishLanguage => 'Inglés';
-
-  @override
-  String get spanishLanguage => 'Español';
-
-  @override
-  String get finnishLanguage => 'Finlandés';
-
-  @override
-  String get chineseLanguage => 'Chino';
-
-  @override
   String get scannerTabLabel => 'Cámara';
 
   @override
