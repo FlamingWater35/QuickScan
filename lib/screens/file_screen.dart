@@ -140,7 +140,7 @@ class _FileScreenState extends State<FileScreen> {
                   children: [
                     ElevatedButton.icon(
                       icon: const Icon(Icons.image_search),
-                      label: Text(l10n.pickImageButtonText),
+                      label: Text(l10n.pickImageButtonText, textAlign: TextAlign.center),
                       onPressed: _isLoading ? null : _pickAndScanImage,
                       style: ElevatedButton.styleFrom(
                         padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 15),

@@ -164,7 +164,7 @@ class _UpdateScreenState extends State<UpdateScreen> {
           children: [
             CircularProgressIndicator(),
             SizedBox(height: 16),
-            Text(l10n.checkingForUpdates, style: statusTextStyle),
+            Text(l10n.checkingForUpdates, style: statusTextStyle, textAlign: TextAlign.center),
           ],
         );
 
@@ -174,14 +174,14 @@ class _UpdateScreenState extends State<UpdateScreen> {
           children: [
             const Icon(Icons.system_update_alt, size: 60, color: Colors.green),
             const SizedBox(height: 16),
-            Text(l10n.updateAvailable, style: Theme.of(context).textTheme.headlineSmall),
+            Text(l10n.updateAvailable, style: Theme.of(context).textTheme.headlineSmall, textAlign: TextAlign.center),
             const SizedBox(height: 8),
-            Text(l10n.currentVersionLabel(_currentVersion)),
-            Text(l10n.newVersionLabel(_latestVersion)),
+            Text(l10n.currentVersionLabel(_currentVersion), textAlign: TextAlign.center),
+            Text(l10n.newVersionLabel(_latestVersion), textAlign: TextAlign.center),
             const SizedBox(height: 24),
             ElevatedButton.icon(
               icon: const Icon(Icons.download_for_offline_outlined),
-              label: Text(l10n.downloadAndInstallButton),
+              label: Text(l10n.downloadAndInstallButton, textAlign: TextAlign.center),
               onPressed: _startDownloadAndInstall,
             ),
           ],
@@ -191,7 +191,7 @@ class _UpdateScreenState extends State<UpdateScreen> {
         return Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Text(l10n.downloadingUpdate(_latestVersion), style: statusTextStyle),
+            Text(l10n.downloadingUpdate(_latestVersion), style: statusTextStyle, textAlign: TextAlign.center),
             const SizedBox(height: 16),
             ClipRRect(
               borderRadius: BorderRadius.circular(5),
@@ -210,7 +210,7 @@ class _UpdateScreenState extends State<UpdateScreen> {
         return Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Text(l10n.startingInstall, style: statusTextStyle),
+            Text(l10n.startingInstall, style: statusTextStyle, textAlign: TextAlign.center),
             SizedBox(height: 16),
             ClipRRect(
               borderRadius: BorderRadius.circular(5),
@@ -228,7 +228,7 @@ class _UpdateScreenState extends State<UpdateScreen> {
           children: [
             Icon(Icons.error_outline, size: 60, color: Theme.of(context).colorScheme.error),
             const SizedBox(height: 16),
-            Text(l10n.updateFailed, style: Theme.of(context).textTheme.headlineSmall),
+            Text(l10n.updateFailed, style: Theme.of(context).textTheme.headlineSmall, textAlign: TextAlign.center),
             const SizedBox(height: 8),
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 32.0),
@@ -237,7 +237,7 @@ class _UpdateScreenState extends State<UpdateScreen> {
             const SizedBox(height: 24),
             TextButton.icon(
               icon: const Icon(Icons.refresh),
-              label: Text(l10n.retryCheckButton),
+              label: Text(l10n.retryCheckButton, textAlign: TextAlign.center),
               onPressed: _performUpdateCheck,
             ),
           ],
@@ -249,11 +249,11 @@ class _UpdateScreenState extends State<UpdateScreen> {
           children: [
             const Icon(Icons.check_circle_outline, size: 60, color: Colors.blue),
             const SizedBox(height: 16),
-            Text(l10n.upToDate, style: Theme.of(context).textTheme.headlineSmall),
+            Text(l10n.upToDate, style: Theme.of(context).textTheme.headlineSmall, textAlign: TextAlign.center),
             const SizedBox(height: 8),
-            Text(l10n.currentVersionLabel(_currentVersion)),
+            Text(l10n.currentVersionLabel(_currentVersion), textAlign: TextAlign.center),
             if (_latestVersion != _currentVersion && _latestVersion.isNotEmpty)
-              Text(l10n.latestVersionLabel(_latestVersion)),
+              Text(l10n.latestVersionLabel(_latestVersion), textAlign: TextAlign.center),
             const SizedBox(height: 8),
             if(_errorMessage.isNotEmpty && !_errorMessage.contains(l10n.noUpdateAvailable))
               Padding(
@@ -263,7 +263,7 @@ class _UpdateScreenState extends State<UpdateScreen> {
             const SizedBox(height: 24),
             TextButton.icon(
               icon: const Icon(Icons.refresh),
-              label: Text(l10n.checkAgainButton),
+              label: Text(l10n.checkAgainButton, textAlign: TextAlign.center),
               onPressed: _performUpdateCheck,
             ),
           ],
@@ -275,7 +275,7 @@ class _UpdateScreenState extends State<UpdateScreen> {
           children: [
             Icon(Icons.check_circle, size: 60, color: Colors.green),
             SizedBox(height: 16),
-            Text(l10n.installDialogShown, style: statusTextStyle),
+            Text(l10n.installDialogShown, style: statusTextStyle, textAlign: TextAlign.center),
           ],
         );
     }
