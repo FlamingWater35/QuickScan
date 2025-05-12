@@ -68,6 +68,7 @@ class _MainScreenState extends State<MainScreen> {
       _log.fine("MainScreen: Switched away from Camera Tab. Stopping scanner AND disabling wakelock.");
       qrScannerState.stopCamera();
       qrScannerState.disableKeepAwake();
+      qrScannerState.resetZoom();
     }
     else if (_previousIndex != 0 && index == 0) {
       _log.fine("MainScreen: Switched to Camera Tab. Starting scanner AND enabling wakelock.");
