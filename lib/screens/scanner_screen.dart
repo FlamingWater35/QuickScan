@@ -30,6 +30,7 @@ class QRScannerScreenState extends State<QRScannerScreen> with WidgetsBindingObs
   bool _isRequestingPermission = false;
 
   double _currentZoomScale = 0.0;
+  CameraFacing? _lastKnownCameraDirection;
 
   @override
   void initState() {
@@ -53,13 +54,10 @@ class QRScannerScreenState extends State<QRScannerScreen> with WidgetsBindingObs
         setState(() {
           _currentZoomScale = 0.0;
         });
-        // Optionally call setZoomScale(0.0) if the controller doesn't reset automatically
-        // controller.setZoomScale(0.0);
       }
       _lastKnownCameraDirection = currentCamera;
     }
   }
-  CameraFacing? _lastKnownCameraDirection;
 
   Future<void> enableKeepAwake() async {
     try {
@@ -84,27 +82,30 @@ class QRScannerScreenState extends State<QRScannerScreen> with WidgetsBindingObs
 
     _log.fine("Checking camera permission...");
 
+    setState(() {
+      _isCheckingPermission = true;
+    });
+
     final status = await Permission.camera.status;
     _log.fine("Initial camera permission status: $status");
 
-    if (mounted) {
-      setState(() {
-        _cameraPermissionStatus = status;
-        _isCheckingPermission = false;
-      });
+    if (!mounted) return;
 
-      if (status.isGranted) {
-        _log.fine("Permission already granted. Initializing scanner.");
-        if (!_isCameraExplicitlyStopped) {
-          await startCamera();
-        }
-      } else if (status.isPermanentlyDenied || status.isRestricted) {
-        _log.warning("Permission permanently denied or restricted ($status). Cannot request.");
+    setState(() {
+      _cameraPermissionStatus = status;
+      _isCheckingPermission = false;
+    });
+
+    if (status.isGranted) {
+      _log.fine("Permission already granted. Initializing scanner.");
+      if (!_isCameraExplicitlyStopped) {
+        await startCamera();
       }
-      else {
-        _log.warning("Camera permission is not granted ($status). Requesting...");
-        await _requestPermission();
-      }
+    } else if (status.isPermanentlyDenied || status.isRestricted) {
+      _log.warning("Permission permanently denied or restricted ($status). Cannot request.");
+    } else {
+      _log.warning("Camera permission is not granted ($status). Requesting...");
+      await _requestPermission();
     }
   }
 
@@ -127,23 +128,23 @@ class QRScannerScreenState extends State<QRScannerScreen> with WidgetsBindingObs
       status = await Permission.camera.request();
       _log.fine("Permission request result: $status");
 
-      if (mounted) {
-        setState(() {
-          _cameraPermissionStatus = status;
-        });
+      if (!mounted) return;
 
-        if (status.isGranted) {
-          _log.fine("Permission granted after request. Initializing scanner.");
-          if (!_isCameraExplicitlyStopped) {
-            await startCamera();
-          }
-        } else {
-          _log.warning("Permission denied after request ($status).");
-          if (status.isPermanentlyDenied) {
-            _showErrorSnackBar(l10n.cameraPermissionDeniedInSettings);
-          } else if (!status.isRestricted) {
-            _showErrorSnackBar(l10n.cameraPermissionRequestText);
-          }
+      setState(() {
+        _cameraPermissionStatus = status;
+      });
+
+      if (status.isGranted) {
+        _log.fine("Permission granted after request. Initializing scanner.");
+        if (!_isCameraExplicitlyStopped) {
+          await startCamera();
+        }
+      } else {
+        _log.warning("Permission denied after request ($status).");
+        if (status.isPermanentlyDenied) {
+          _showErrorSnackBar(l10n.cameraPermissionDeniedInSettings);
+        } else if (!status.isRestricted) {
+          _showErrorSnackBar(l10n.cameraPermissionRequestText);
         }
       }
     } catch (e, s) {
@@ -155,37 +156,38 @@ class QRScannerScreenState extends State<QRScannerScreen> with WidgetsBindingObs
         });
       }
     } finally {
+      _isRequestingPermission = false;
       if (mounted) {
-        setState(() {
-          _isRequestingPermission = false;
-        });
-      } else {
-        _isRequestingPermission = false;
+        setState(() {});
       }
       _log.finer("Permission request flag reset.");
     }
   }
 
   Future<void> startCamera() async {
+    if (!mounted) return;
+
     final currentStatus = await Permission.camera.status;
-    if (mounted) {
-      if (_cameraPermissionStatus != currentStatus) {
-        setState(() => _cameraPermissionStatus = currentStatus);
-      }
-    } else {
+    if (mounted && _cameraPermissionStatus != currentStatus) {
+      setState(() => _cameraPermissionStatus = currentStatus);
+    } else if (!mounted) {
       return;
     }
 
     if (currentStatus != PermissionStatus.granted) {
-      _log.warning("startCamera called but permission is not granted ($currentStatus). Requesting again (if possible).");
-      await _requestPermission();
-      final statusAfterRequest = await Permission.camera.status;
-      if (mounted && _cameraPermissionStatus != statusAfterRequest) {
-        setState(() => _cameraPermissionStatus = statusAfterRequest);
-      }
-
-      if (statusAfterRequest != PermissionStatus.granted) {
-        _log.severe("Permission denied after re-request in startCamera. Aborting start.");
+      _log.warning("startCamera called but permission is not granted ($currentStatus). Attempting to re-request (if possible).");
+      if (currentStatus.isDenied) {
+        await _requestPermission();
+        final statusAfterRequest = await Permission.camera.status;
+        if (mounted && _cameraPermissionStatus != statusAfterRequest) {
+          setState(() => _cameraPermissionStatus = statusAfterRequest);
+        }
+        if (statusAfterRequest != PermissionStatus.granted) {
+          _log.severe("Permission denied after re-request in startCamera. Aborting start.");
+          return;
+        }
+      } else {
+        _log.severe("Permission not granted ($currentStatus) and not re-requesting in startCamera. Aborting start.");
         return;
       }
     }
@@ -229,7 +231,7 @@ class QRScannerScreenState extends State<QRScannerScreen> with WidgetsBindingObs
       _subscription?.cancel();
       _subscription = controller.barcodes.listen(_handleBarcode, onError: (error) {
         _log.severe("QRScannerScreenState: Error listening to barcode stream: $error");
-        _showErrorSnackBar(l10n.errorReceivingBarcodeData);
+        if (mounted) _showErrorSnackBar(l10n.errorReceivingBarcodeData);
       }, onDone: () {
         _log.warning("Barcode stream closed unexpectedly.");
         _subscription = null;
@@ -240,7 +242,7 @@ class QRScannerScreenState extends State<QRScannerScreen> with WidgetsBindingObs
       });
     } catch (e, s) {
       _log.severe("QRScannerScreenState: Exception setting up barcode listener: $e", e, s);
-      _showErrorSnackBar(l10n.failedToSetUpBarcodeListener);
+      if (mounted) _showErrorSnackBar(l10n.failedToSetUpBarcodeListener);
     }
   }
 
@@ -303,11 +305,12 @@ class QRScannerScreenState extends State<QRScannerScreen> with WidgetsBindingObs
               if (currentStatus.isGranted) {
                 await _resumeScanner();
               } else {
-                _log.warning("Permission no longer granted after returning from result screen.");
+                _log.warning("Permission no longer granted after returning from result screen. UI should reflect this.");
               }
             }
           } else {
             _log.fine("Scanner restart skipped (unmounted or explicitly stopped).");
+            if (_isCameraExplicitlyStopped && mounted) await disableKeepAwake();
           }
         } else {
           _log.fine("Widget unmounted after returning from ResultScreen.");
@@ -316,8 +319,6 @@ class QRScannerScreenState extends State<QRScannerScreen> with WidgetsBindingObs
       } else {
         _log.warning("Barcode detected but rawValue is null.");
       }
-    } else {
-      // _log.finer("BarcodeCapture received but contains no barcodes.");
     }
   }
 
@@ -325,36 +326,32 @@ class QRScannerScreenState extends State<QRScannerScreen> with WidgetsBindingObs
   void didChangeAppLifecycleState(AppLifecycleState state) {
     super.didChangeAppLifecycleState(state);
     if (!mounted) return;
-    if (_cameraPermissionStatus != PermissionStatus.granted) {
-      _log.finer("App lifecycle changed ($state) but no camera permission. Ignoring pause/resume.");
-      return;
-    }
-
-    if (_isNavigating) {
-      _log.finer("App lifecycle changed ($state) but currently navigating, ignoring.");
-      return;
-    }
-    if (_isRequestingPermission) {
-      _log.finer("App lifecycle changed ($state) but requesting permission, ignoring pause/resume.");
-      return;
-    }
 
     _log.fine("App lifecycle state changed: $state");
 
+    if (_isNavigating) {
+      _log.finer("App lifecycle changed ($state) but currently navigating, ignoring pause/resume logic here.");
+      return;
+    }
+    if (_isRequestingPermission) {
+      _log.finer("App lifecycle changed ($state) but requesting permission, ignoring pause/resume logic here.");
+      return;
+    }
+
     switch (state) {
       case AppLifecycleState.resumed:
-        _log.fine("App resumed.");
+        _log.fine("App resumed. Re-evaluating permissions and scanner state.");
         _checkPermissionAndInitialize();
         break;
       case AppLifecycleState.detached:
       case AppLifecycleState.hidden:
       case AppLifecycleState.paused:
       case AppLifecycleState.inactive:
-        if (controller.value.isRunning) {
+        if (controller.value.isRunning && _cameraPermissionStatus == PermissionStatus.granted) {
           _log.fine("App paused/inactive ($state), pausing scanner.");
           _pauseScanner();
         } else {
-          _log.fine("App paused/inactive ($state), but scanner already stopped.");
+          _log.fine("App paused/inactive ($state), but scanner already stopped or no permission.");
         }
         break;
     }
@@ -365,50 +362,70 @@ class QRScannerScreenState extends State<QRScannerScreen> with WidgetsBindingObs
       await _subscription?.cancel();
       _subscription = null;
       _log.fine("Barcode subscription cancelled.");
-    } else {
-      _log.finer("Pause requested but no active barcode subscription.");
     }
 
     if (controller.value.isRunning) {
       try {
         _log.fine("Pausing scanner controller...");
         await controller.stop();
+        await disableKeepAwake();
         _log.fine("Scanner controller stopped.");
       } catch (e, s) {
         _log.severe("Error stopping scanner during pause: $e", e, s);
+        await disableKeepAwake();
       }
     } else {
       _log.fine("Pause requested but scanner controller already stopped.");
+      if (await WakelockPlus.enabled) {
+        await disableKeepAwake();
+      }
     }
   }
 
   Future<void> _resumeScanner() async {
     final l10n = AppLocalizations.of(context);
 
-    if (_isRequestingPermission || _cameraPermissionStatus != PermissionStatus.granted) {
-      _log.warning("_resumeScanner: Aborting resume (requesting permission: $_isRequestingPermission, status: $_cameraPermissionStatus).");
+    if (!mounted) return;
+
+    final freshStatus = await Permission.camera.status;
+    if (_cameraPermissionStatus != freshStatus) {
+      setState(() { _cameraPermissionStatus = freshStatus; });
+    }
+
+    if (_isRequestingPermission || freshStatus != PermissionStatus.granted) {
+      _log.warning("_resumeScanner: Aborting resume (requesting permission: $_isRequestingPermission, status: $freshStatus).");
+      if (freshStatus != PermissionStatus.granted) await disableKeepAwake();
       return;
     }
 
-    if (!mounted || _isNavigating || _isCameraExplicitlyStopped) {
+    if (_isNavigating || _isCameraExplicitlyStopped) {
       _log.warning(
-        "_resumeScanner: Conditions not met (mounted:$mounted, navigating:$_isNavigating, explicitStop:$_isCameraExplicitlyStopped, permission:$_cameraPermissionStatus)");
+        "_resumeScanner: Conditions not met (navigating:$_isNavigating, explicitStop:$_isCameraExplicitlyStopped).");
+      if (_isCameraExplicitlyStopped) await disableKeepAwake();
       return;
     }
 
     if (controller.value.isRunning) {
-      _log.fine("Scanner already running, ensuring listener is active.");
+      _log.fine("Scanner already running, ensuring listener and wakelock are active.");
+      await enableKeepAwake();
       _listenForBarcodes();
       return;
     }
 
     _log.fine("QRScannerScreen: Resuming scanner...");
     bool startSuccess = false;
+    MobileScannerException? scannerException;
+    dynamic genericException;
+    StackTrace? stackTrace;
+
     try {
       _log.fine("QRScannerScreenState: Calling controller.start()...");
       await enableKeepAwake();
       await controller.start();
-      if (!mounted) return;
+      if (!mounted) {
+        await disableKeepAwake();
+        return;
+      }
 
       if (controller.value.isRunning && controller.value.error == null) {
         _log.fine("QRScannerScreenState: controller.start() successful.");
@@ -420,30 +437,55 @@ class QRScannerScreenState extends State<QRScannerScreen> with WidgetsBindingObs
         await disableKeepAwake();
 
         if (error?.errorCode == MobileScannerErrorCode.permissionDenied) {
-          _log.severe("Scanner reported permission denied during start. Updating state and showing error.");
+          final currentSystemPermission = await Permission.camera.status;
           if (mounted) {
-            setState(() => _cameraPermissionStatus = PermissionStatus.denied);
-            _showErrorSnackBar(l10n.cameraPermissionDeniedInSettings);
+            if (currentSystemPermission.isGranted) {
+              _log.warning("controller.value.error is PermissionDenied, but system permission IS granted. Potential transient issue. Scanner UI will show error via errorBuilder.");
+              // _showErrorSnackBar(l10n.cameraStartError("Camera temporarily unavailable after permission grant."));
+            } else {
+              _log.severe("controller.value.error is PermissionDenied, and system permission is also NOT granted. Setting UI to denied.");
+              if (_cameraPermissionStatus != currentSystemPermission) {
+                setState(() => _cameraPermissionStatus = currentSystemPermission);
+              }
+              _showErrorSnackBar(l10n.cameraPermissionDeniedInSettings);
+            }
           }
-        } else if (error != null) {
-          _showErrorSnackBar(l10n.cameraStartError(error.errorDetails.toString()));
-        } else if (!controller.value.isRunning) {
+        } else if (error != null && mounted) {
+          _showErrorSnackBar(l10n.cameraStartError(error.errorDetails?.toString() ?? error.errorCode.toString()));
+        } else if (!controller.value.isRunning && mounted) {
           _showErrorSnackBar(l10n.cameraGenericError);
         }
       }
     } on MobileScannerException catch (e, s) {
-      _log.severe("QRScannerScreenState: MobileScannerException during start: ${e.errorCode} - ${e.errorDetails}", e, s);
+      scannerException = e;
+      stackTrace = s;
+    } catch (e, s) {
+      genericException = e;
+      stackTrace = s;
+    }
+
+    if (scannerException != null) {
+      _log.severe("QRScannerScreenState: MobileScannerException during start: ${scannerException.errorCode} - ${scannerException.errorDetails}", scannerException, stackTrace);
       await disableKeepAwake();
       if (mounted) {
-        if (e.errorCode == MobileScannerErrorCode.permissionDenied) {
-          setState(() => _cameraPermissionStatus = PermissionStatus.denied);
-          _showErrorSnackBar(l10n.cameraPermissionDeniedInSettings);
+        if (scannerException.errorCode == MobileScannerErrorCode.permissionDenied) {
+          final currentSystemPermission = await Permission.camera.status;
+          if (currentSystemPermission.isGranted) {
+            _log.warning("MobileScanner controller THREW PermissionDenied exception, but system permission IS granted. Potential transient issue.");
+            _showErrorSnackBar(l10n.cameraStartError("Camera temporarily unavailable after permission grant. Please try reopening the scanner."));
+          } else {
+            _log.severe("MobileScanner controller THREW PermissionDenied, and system permission is also NOT granted. Setting UI to denied.");
+            if (_cameraPermissionStatus != currentSystemPermission) {
+              setState(() => _cameraPermissionStatus = currentSystemPermission);
+            }
+            _showErrorSnackBar(l10n.cameraPermissionDeniedInSettings);
+          }
         } else {
-          _showErrorSnackBar(l10n.cameraStartError(e.errorDetails.toString()));
+          _showErrorSnackBar(l10n.cameraStartError(scannerException.errorDetails?.toString() ?? scannerException.errorCode.toString()));
         }
       }
-    } catch (e, s) {
-      _log.severe("QRScannerScreenState: Generic error during controller.start(): $e", e, s);
+    } else if (genericException != null) {
+      _log.severe("QRScannerScreenState: Generic error during controller.start(): $genericException", genericException, stackTrace);
       await disableKeepAwake();
       if (mounted) {
         _showErrorSnackBar(l10n.cameraGenericError);
@@ -452,18 +494,19 @@ class QRScannerScreenState extends State<QRScannerScreen> with WidgetsBindingObs
 
     if (startSuccess && mounted) {
       _listenForBarcodes();
+    } else if (!startSuccess && mounted) {
+      _log.warning("Scanner start was not successful, barcode listening skipped.");
     }
   }
 
   void _setZoom(double value) {
     if (!mounted || !controller.value.isInitialized || !controller.value.isRunning) {
-      _log.finer("Conditions not met (mounted, initialized, running). Skipping setZoomScale.");
+      _log.finer("Conditions not met for setZoomScale (mounted:$mounted, initialized:${controller.value.isInitialized}, running:${controller.value.isRunning}). Skipping.");
       return;
     }
-    
+
     try {
       controller.setZoomScale(value);
-      _log.finer("Set zoom scale to: $value");
     } catch (e, s) {
       _log.severe("Error setting zoom scale: $e", e, s);
     }
@@ -471,13 +514,15 @@ class QRScannerScreenState extends State<QRScannerScreen> with WidgetsBindingObs
 
   void resetZoom() {
     if (!mounted || !controller.value.isInitialized || !controller.value.isRunning) {
-      _log.finer("Conditions not met (initialized, running). Skipping resetZoomScale.");
+      _log.finer("Conditions not met for resetZoomScale. Skipping.");
       return;
     }
 
     try {
       controller.resetZoomScale();
-      setState(() { _currentZoomScale = 0; });
+      if(mounted) {
+        setState(() { _currentZoomScale = 0; });
+      }
       _log.finer("Reset zoom scale");
     } catch (e, s) {
       _log.severe("Error resetting zoom scale: $e", e, s);
@@ -485,7 +530,7 @@ class QRScannerScreenState extends State<QRScannerScreen> with WidgetsBindingObs
   }
 
   void _showErrorSnackBar(String message) {
-    if (!mounted) return;
+    if (!mounted || !context.mounted) return;
     ScaffoldMessenger.of(context).removeCurrentSnackBar();
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
@@ -509,14 +554,16 @@ class QRScannerScreenState extends State<QRScannerScreen> with WidgetsBindingObs
       if (controller.value.isRunning) {
         await controller.stop();
       }
-    } catch (e) {
-      _log.warning("Error stopping controller during dispose: $e");
+    } catch (e,s) {
+      _log.warning("Error stopping controller during dispose: $e", e, s);
     }
     await controller.dispose();
 
     try {
-      await WakelockPlus.disable();
-      _log.fine("QRScannerScreenState: Wakelock disabled on dispose.");
+      if (await WakelockPlus.enabled) {
+        await WakelockPlus.disable();
+      }
+      _log.fine("QRScannerScreenState: Wakelock explicitly checked and disabled on dispose.");
     } catch (e,s) {
       _log.severe("Error disabling wakelock during dispose: $e", e, s);
     }
@@ -550,7 +597,7 @@ class QRScannerScreenState extends State<QRScannerScreen> with WidgetsBindingObs
                     torchTooltip = 'Turn on flash';
                     onTorchPressed = () => controller.toggleTorch().catchError((e) {
                       _log.severe("Error toggling torch: $e");
-                      _showErrorSnackBar(l10n.couldNotToggleFlash);
+                      if (mounted) _showErrorSnackBar(l10n.couldNotToggleFlash);
                     });
                     break;
                   case TorchState.on:
@@ -559,7 +606,7 @@ class QRScannerScreenState extends State<QRScannerScreen> with WidgetsBindingObs
                     torchColor = Colors.yellow.shade700;
                     onTorchPressed = () => controller.toggleTorch().catchError((e) {
                       _log.severe("Error toggling torch: $e");
-                      _showErrorSnackBar(l10n.couldNotToggleFlash);
+                      if (mounted) _showErrorSnackBar(l10n.couldNotToggleFlash);
                     });
                     break;
                   case TorchState.auto:
@@ -591,7 +638,7 @@ class QRScannerScreenState extends State<QRScannerScreen> with WidgetsBindingObs
                   tooltip: 'Switch camera',
                   onPressed: () => controller.switchCamera().catchError((e) {
                     _log.severe("Error switching camera: $e");
-                    _showErrorSnackBar(l10n.couldNotSwitchCamera);
+                    if (mounted) _showErrorSnackBar(l10n.couldNotSwitchCamera);
                   }),
                 );
               },
@@ -669,18 +716,37 @@ class QRScannerScreenState extends State<QRScannerScreen> with WidgetsBindingObs
             controller: controller,
             errorBuilder: (context, error, child) {
               _log.severe("MobileScanner errorBuilder: ${error.errorCode} ${error.errorDetails}");
-              String errorMessage = l10n.cameraGenericError;
-              bool showSettingsButton = false;
+              String errorMessage;
+              bool showSettingsButtonForError = false;
 
-              if (error.errorCode == MobileScannerErrorCode.permissionDenied) {
-                errorMessage = l10n.cameraPermissionDeniedOrRevoked;
-                showSettingsButton = true;
-                WidgetsBinding.instance.addPostFrameCallback((_) {
-                  if (mounted && _cameraPermissionStatus != PermissionStatus.denied) {
-                    _log.warning("Updating state to denied based on errorBuilder reporting permissionDenied.");
-                    setState(() => _cameraPermissionStatus = PermissionStatus.denied);
+              WidgetsBinding.instance.addPostFrameCallback((_) async {
+                if (!mounted) return;
+                final currentSystemPermission = await Permission.camera.status;
+
+                if (error.errorCode == MobileScannerErrorCode.permissionDenied) {
+                  if (currentSystemPermission.isGranted) {
+                    _log.warning("MobileScanner.errorBuilder: Controller reported PermissionDenied, but system permission IS granted. UI shows component error.");
+                  } else {
+                    _log.warning("MobileScanner.errorBuilder: Controller reported PermissionDenied, and system concurs. Updating UI to reflect denial.");
+                    if (_cameraPermissionStatus != currentSystemPermission) {
+                      setState(() => _cameraPermissionStatus = currentSystemPermission);
+                    }
                   }
-                });
+                } else if (_cameraPermissionStatus == PermissionStatus.granted && !currentSystemPermission.isGranted) {
+                  _log.warning("MobileScanner.errorBuilder: System permission changed to !granted while scanner was active. Updating UI.");
+                  if (_cameraPermissionStatus != currentSystemPermission) {
+                    setState(() => _cameraPermissionStatus = currentSystemPermission);
+                  }
+                }
+              });
+              if (error.errorCode == MobileScannerErrorCode.permissionDenied) {
+                if (_cameraPermissionStatus == PermissionStatus.granted) {
+                  errorMessage = l10n.cameraStartError("Internal camera error. Please try again.");
+                  showSettingsButtonForError = false;
+                } else {
+                  errorMessage = l10n.cameraPermissionDeniedOrRevoked;
+                  showSettingsButtonForError = true;
+                }
               } else if (error.errorCode == MobileScannerErrorCode.unsupported) {
                 errorMessage = l10n.cameraNotSupported;
               } else if (error.errorDetails != null) {
@@ -689,10 +755,10 @@ class QRScannerScreenState extends State<QRScannerScreen> with WidgetsBindingObs
                 errorMessage = l10n.cameraStartError(error.errorCode.toString());
               }
 
-              return _buildErrorWidget(errorMessage, showSettingsButton);
+              return _buildErrorWidget(errorMessage, showSettingsButtonForError);
             },
             placeholderBuilder: (context, child) {
-              _log.finer("Building: Scanner Placeholder UI");
+              _log.finer("Building: Scanner Placeholder UI (while MobileScanner initializes)");
               return Container(
                 color: Colors.black,
                 child: const Center(child: CircularProgressIndicator()),
@@ -748,19 +814,18 @@ class QRScannerScreenState extends State<QRScannerScreen> with WidgetsBindingObs
     bool isRestricted = _cameraPermissionStatus == PermissionStatus.restricted;
 
     String message;
-    String buttonText;
+    String buttonText = "";
     VoidCallback? onPressed;
 
     if (isPermanentlyDenied) {
       message = l10n.cameraPermissionPermanentlyDeniedText;
       buttonText = l10n.openSettingsText;
       onPressed = () async {
-        _log.fine("Opening app settings...");
+        _log.fine("Opening app settings due to permanent denial...");
         await openAppSettings();
       };
     } else if (isRestricted) {
       message = l10n.cameraPermissionRestrictedText;
-      buttonText = '';
       onPressed = null;
     } else {
       message = l10n.cameraPermissionRequestText;
@@ -775,7 +840,7 @@ class QRScannerScreenState extends State<QRScannerScreen> with WidgetsBindingObs
           mainAxisSize: MainAxisSize.min,
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(Icons.no_photography_outlined, size: 70, color: Theme.of(context).colorScheme.error),
+            Icon(Icons.no_photography_outlined, size: 70, color: Theme.of(context).colorScheme.error.withAlpha(200)),
             const SizedBox(height: 20),
             Text(message, textAlign: TextAlign.center, style: Theme.of(context).textTheme.titleMedium),
             const SizedBox(height: 25),
@@ -809,7 +874,7 @@ class QRScannerScreenState extends State<QRScannerScreen> with WidgetsBindingObs
               Text(
                 message,
                 textAlign: TextAlign.center,
-                style: Theme.of(context).textTheme.titleMedium?.copyWith(color: Theme.of(context).colorScheme.error)
+                style: Theme.of(context).textTheme.titleMedium?.copyWith(color: Colors.white70)
               ),
               const SizedBox(height: 25),
               if (showSettingsButton)
