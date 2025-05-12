@@ -296,6 +296,10 @@ class QRScannerScreenState extends State<QRScannerScreen> with WidgetsBindingObs
   void didChangeAppLifecycleState(AppLifecycleState state) {
     super.didChangeAppLifecycleState(state);
     if (!mounted) return;
+    if (_cameraPermissionStatus != PermissionStatus.granted) {
+      _log.finer("App lifecycle changed ($state) but no camera permission. Ignoring pause/resume.");
+      return;
+    }
     if (_isNavigating) {
       _log.finer("App lifecycle changed ($state) but currently navigating, ignoring.");
       return;
@@ -387,6 +391,7 @@ class QRScannerScreenState extends State<QRScannerScreen> with WidgetsBindingObs
       }
     } on MobileScannerException catch (e, s) {
       _log.severe("QRScannerScreenState: MobileScannerException during start: ${e.errorCode} - ${e.errorDetails}", e, s);
+      await disableKeepAwake();
       if (mounted) {
         if (e.errorCode == MobileScannerErrorCode.permissionDenied) {
           setState(() => _cameraPermissionStatus = PermissionStatus.denied);
@@ -397,6 +402,7 @@ class QRScannerScreenState extends State<QRScannerScreen> with WidgetsBindingObs
       }
     } catch (e, s) {
       _log.severe("QRScannerScreenState: Generic error during controller.start(): $e", e, s);
+      await disableKeepAwake();
       if (mounted) {
         _showErrorSnackBar(l10n.cameraGenericError);
       }
@@ -463,7 +469,7 @@ class QRScannerScreenState extends State<QRScannerScreen> with WidgetsBindingObs
                 }
                 Widget torchIcon;
                 String torchTooltip;
-                Color torchColor = Colors.white;
+                Color torchColor = Theme.of(context).iconTheme.color ?? Colors.white;
 
                 switch (state.torchState) {
                   case TorchState.off:
@@ -473,7 +479,7 @@ class QRScannerScreenState extends State<QRScannerScreen> with WidgetsBindingObs
                   case TorchState.on:
                     torchIcon = const Icon(Icons.flash_on);
                     torchTooltip = 'Turn off flash';
-                    torchColor = Colors.yellow;
+                    torchColor = Colors.yellow.shade700;
                     break;
                   case TorchState.auto:
                   case TorchState.unavailable:
@@ -510,7 +516,7 @@ class QRScannerScreenState extends State<QRScannerScreen> with WidgetsBindingObs
                   return const SizedBox.shrink();
                 }
                 return IconButton(
-                  color: Colors.white,
+                  color: Theme.of(context).iconTheme.color ?? Colors.white,
                   icon: const Icon(Icons.switch_camera),
                   tooltip: 'Switch camera',
                   onPressed: () async {
