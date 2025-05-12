@@ -660,7 +660,7 @@ class QRScannerScreenState extends State<QRScannerScreen> with WidgetsBindingObs
         valueListenable: controller,
         builder: (context, state, child) {
           if (!state.isInitialized || !state.isRunning) {
-            return const SizedBox.shrink();
+            return const SizedBox(height: 32.0);
           }
 
           return Container(
