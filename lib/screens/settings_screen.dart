@@ -1,3 +1,4 @@
+import 'package:animations/animations.dart';
 import 'package:flutter/material.dart';
 import 'package:logging/logging.dart';
 import 'package:package_info_plus/package_info_plus.dart';
@@ -17,7 +18,6 @@ class SettingsScreen extends ConsumerStatefulWidget {
 class _SettingsScreenState extends ConsumerState<SettingsScreen> {
   final _log = Logger('SettingsScreen');
   String _appVersion = '';
-  final String _updateHeroTag = 'update-hero-tag';
   bool _isVersionLoaded = false;
 
   @override
@@ -61,10 +61,20 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
 
   void _handleCheckForUpdates() {
     _log.info("Check for Updates button tapped - Navigating");
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => UpdateScreen(heroTag: _updateHeroTag),
+    Navigator.of(context).push(
+      PageRouteBuilder(
+        pageBuilder: (context, animation, secondaryAnimation) {
+          return const UpdateScreen();
+        },
+        transitionsBuilder: (context, animation, secondaryAnimation, child) {
+          return SharedAxisTransition(
+            animation: animation,
+            secondaryAnimation: secondaryAnimation,
+            transitionType: SharedAxisTransitionType.horizontal,
+            child: child,
+          );
+        },
+        transitionDuration: const Duration(milliseconds: 400),
       ),
     );
   }
@@ -293,17 +303,11 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                     padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
                     child: Text(l10n.applicationSectionTitle, style: theme.textTheme.titleSmall),
                   ),
-                  Hero(
-                    tag: _updateHeroTag,
-                    child: Material(
-                      type: MaterialType.transparency,
-                      child: ListTile(
-                        leading: const Icon(Icons.system_update_alt_outlined),
-                        title: Text(l10n.checkForUpdatesLabel),
-                        onTap: _handleCheckForUpdates,
-                        contentPadding: const EdgeInsets.symmetric(horizontal: 16.0),
-                      ),
-                    ),
+                  ListTile(
+                    leading: const Icon(Icons.system_update_alt_outlined),
+                    title: Text(l10n.checkForUpdatesLabel),
+                    onTap: _handleCheckForUpdates,
+                    contentPadding: const EdgeInsets.symmetric(horizontal: 16.0),
                   ),
                 ],
               ),
