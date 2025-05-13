@@ -1,10 +1,12 @@
 import 'dart:async';
+import 'package:animated_text_kit/animated_text_kit.dart';
 import 'package:flutter/material.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
 import 'package:logging/logging.dart';
 import 'package:permission_handler/permission_handler.dart';
 import '/l10n/app_localizations.dart';
 import 'package:wakelock_plus/wakelock_plus.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 
 import 'scan_result_screen.dart';
 
@@ -708,7 +710,7 @@ class QRScannerScreenState extends State<QRScannerScreen> with WidgetsBindingObs
               ),
             ),
           ),
-        );
+        ).animate().fadeIn(duration: const Duration(milliseconds: 200)).scaleY(duration: const Duration(milliseconds: 200));
       },
     );
   }
@@ -804,10 +806,17 @@ class QRScannerScreenState extends State<QRScannerScreen> with WidgetsBindingObs
                 color: Colors.black.withAlpha(140),
                 borderRadius: BorderRadius.circular(8),
               ),
-              child: Text(
-                l10n.scannerTabScanText,
-                style: const TextStyle(color: Colors.white, fontSize: 16.0),
-                textAlign: TextAlign.center,
+              child: AnimatedTextKit(
+                animatedTexts: [
+                  TypewriterAnimatedText(
+                    l10n.scannerTabScanText,
+                    textStyle: const TextStyle(color: Colors.white, fontSize: 16.0),
+                    textAlign: TextAlign.center,
+                    speed: const Duration(milliseconds: 10)
+                  ),
+                ],
+                isRepeatingAnimation: false,
+                displayFullTextOnTap: true,
               ),
             ),
           ),
