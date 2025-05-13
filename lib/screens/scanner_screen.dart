@@ -648,58 +648,69 @@ class QRScannerScreenState extends State<QRScannerScreen> with WidgetsBindingObs
         ],
       ),
       body: _buildScannerBody(),
-      persistentFooterButtons: _buildPersistentFooter(l10n),
     );
   }
 
-  List<Widget>? _buildPersistentFooter(AppLocalizations l10n) {
-    if (_cameraPermissionStatus != PermissionStatus.granted) {
-      return null;
-    }
+  Widget _buildVerticalZoomSlider() {
+    return ValueListenableBuilder<MobileScannerState>(
+      valueListenable: controller,
+      builder: (context, state, child) {
+        if (!state.isInitialized || !state.isRunning) {
+          return const SizedBox.shrink();
+        }
 
-    return [
-      ValueListenableBuilder<MobileScannerState>(
-        valueListenable: controller,
-        builder: (context, state, child) {
-          if (!state.isInitialized || !state.isRunning) {
-            return const SizedBox(height: 32.0);
-          }
+        final double sliderTrackVisualLength = MediaQuery.of(context).size.height * 0.3;
 
-          return Container(
-            padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 0),
-            child: Row(
-              mainAxisSize: MainAxisSize.max,
-              children: [
-                const Icon(Icons.zoom_out, color: Colors.grey),
-                Expanded(
-                  child: SliderTheme(
-                    data: SliderTheme.of(context).copyWith(
-                      trackHeight: 2.0,
-                      thumbShape: const RoundSliderThumbShape(enabledThumbRadius: 8.0),
-                      overlayShape: const RoundSliderOverlayShape(overlayRadius: 16.0),
-                    ),
-                    child: Slider(
-                      value: _currentZoomScale,
-                      min: 0.0,
-                      max: 1.0,
-                      activeColor: Theme.of(context).colorScheme.primary,
-                      inactiveColor: Colors.grey.shade400,
-                      onChanged: (value) {
-                        if (mounted) {
-                          setState(() { _currentZoomScale = value; });
-                          _setZoom(value);
-                        }
-                      },
+        return Align(
+          alignment: Alignment.centerRight,
+          child: Padding(
+            padding: const EdgeInsets.only(right: 16.0),
+            child: Container(
+              padding: const EdgeInsets.symmetric(vertical: 16.0, horizontal: 8.0),
+              decoration: BoxDecoration(
+                color: Colors.black.withAlpha(120),
+                borderRadius: BorderRadius.circular(20.0),
+              ),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  const Icon(Icons.zoom_in, color: Colors.white, size: 24.0),
+                  SizedBox(
+                    height: sliderTrackVisualLength.clamp(100.0, 300.0),
+                    width: 30,
+                    child: RotatedBox(
+                      quarterTurns: 1,
+                      child: SliderTheme(
+                        data: SliderTheme.of(context).copyWith(
+                          trackHeight: 2.0,
+                          thumbShape: const RoundSliderThumbShape(enabledThumbRadius: 10.0),
+                          overlayShape: const RoundSliderOverlayShape(overlayRadius: 18.0),
+                        ),
+                        child: Slider(
+                          value: _currentZoomScale,
+                          min: 0.0,
+                          max: 1.0,
+                          activeColor: Theme.of(context).colorScheme.primary,
+                          inactiveColor: Colors.grey.shade300,
+                          onChanged: (value) {
+                            if (mounted) {
+                              setState(() { _currentZoomScale = value; });
+                              _setZoom(value);
+                            }
+                          },
+                        ),
+                      ),
                     ),
                   ),
-                ),
-                const Icon(Icons.zoom_in, color: Colors.grey),
-              ],
+                  const Icon(Icons.zoom_out, color: Colors.white, size: 24.0),
+                ],
+              ),
             ),
-          );
-        },
-      ),
-    ];
+          ),
+        );
+      },
+    );
   }
 
   Widget _buildScannerBody() {
@@ -800,6 +811,7 @@ class QRScannerScreenState extends State<QRScannerScreen> with WidgetsBindingObs
               ),
             ),
           ),
+          _buildVerticalZoomSlider(),
         ],
       );
     }
