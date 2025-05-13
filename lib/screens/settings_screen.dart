@@ -152,27 +152,30 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                           borderRadius: BorderRadius.circular(12.0),
                         ),
                         clipBehavior: Clip.antiAlias,
-                        child: ListView(
-                          padding: EdgeInsets.zero,
-                          children: supportedLocales.map((locale) {
-                            final languageName = _getLanguageName(locale, l10n);
-                            final bool isSelected = locale == currentLocaleInSheet;
+                        child: Material(
+                          color: Colors.transparent,
+                          child: ListView(
+                            padding: EdgeInsets.zero,
+                            children: supportedLocales.map((locale) {
+                              final languageName = _getLanguageName(locale, l10n);
+                              final bool isSelected = locale == currentLocaleInSheet;
 
-                            return ListTile(
-                              title: Text(languageName),
-                              leading: Radio<Locale>(
-                                value: locale,
-                                groupValue: currentLocaleInSheet,
-                                onChanged: handleLocaleSelection,
-                                activeColor: theme.colorScheme.primary,
+                              return ListTile(
+                                title: Text(languageName),
+                                leading: Radio<Locale>(
+                                  value: locale,
+                                  groupValue: currentLocaleInSheet,
+                                  onChanged: handleLocaleSelection,
+                                  activeColor: theme.colorScheme.primary,
+                                  visualDensity: VisualDensity.compact,
+                                ),
+                                selected: isSelected,
+                                contentPadding: const EdgeInsets.symmetric(horizontal: 16.0),
                                 visualDensity: VisualDensity.compact,
-                              ),
-                              selected: isSelected,
-                              contentPadding: const EdgeInsets.symmetric(horizontal: 16.0),
-                              visualDensity: VisualDensity.compact,
-                              onTap: () => handleLocaleSelection(locale),
-                            );
-                          }).toList(),
+                                onTap: () => handleLocaleSelection(locale),
+                              );
+                            }).toList(),
+                          ),
                         ),
                       ),
                     ),
