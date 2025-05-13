@@ -30,7 +30,7 @@ class UpdateService {
   static final _log = Logger('UpdateService');
 
   static const String _githubOwner = 'FlamingWater35';
-  static const String _githubRepo = 'SimpleScanner';
+  static const String _githubRepo = 'QuickScan';
   static const String _updateFilePrefsKey = 'downloaded_update_path';
 
   static Future<UpdateInfo> checkForUpdate() async {
