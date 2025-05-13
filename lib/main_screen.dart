@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:logging/logging.dart';
-import 'package:simple_scanner/l10n/app_localizations.dart';
+import '/l10n/app_localizations.dart';
 
 import '/screens/scanner_screen.dart';
 import '/screens/file_screen.dart';

@@ -1,6 +1,6 @@
-# Simple Scanner
+# QuickScan
 
-A Material 3 scanner app made using Flutter.
+A Material 3 QR code scanner application.
 
 ## Requirements
 - Android 5 or newer

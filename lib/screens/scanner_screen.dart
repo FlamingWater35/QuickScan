@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
 import 'package:logging/logging.dart';
 import 'package:permission_handler/permission_handler.dart';
-import 'package:simple_scanner/l10n/app_localizations.dart';
+import '/l10n/app_localizations.dart';
 import 'package:wakelock_plus/wakelock_plus.dart';
 
 import 'scan_result_screen.dart';
@@ -18,8 +18,9 @@ class QRScannerScreen extends StatefulWidget {
 class QRScannerScreenState extends State<QRScannerScreen> with WidgetsBindingObserver {
   final _log = Logger('CameraScannerScreenState');
   final MobileScannerController controller = MobileScannerController(
-    // formats: [BarcodeFormat.qrCode], // Limit to QR codes
-    // detectionSpeed: DetectionSpeed.normal, // Adjust speed
+    formats: [BarcodeFormat.qrCode],
+    detectionSpeed: DetectionSpeed.normal,
+    returnImage: false
   );
 
   StreamSubscription<Object?>? _subscription;
@@ -346,13 +347,14 @@ class QRScannerScreenState extends State<QRScannerScreen> with WidgetsBindingObs
       case AppLifecycleState.detached:
       case AppLifecycleState.hidden:
       case AppLifecycleState.paused:
-      case AppLifecycleState.inactive:
         if (controller.value.isRunning && _cameraPermissionStatus == PermissionStatus.granted) {
           _log.fine("App paused/inactive ($state), pausing scanner.");
           _pauseScanner();
         } else {
           _log.fine("App paused/inactive ($state), but scanner already stopped or no permission.");
         }
+        break;
+      case AppLifecycleState.inactive:
         break;
     }
   }

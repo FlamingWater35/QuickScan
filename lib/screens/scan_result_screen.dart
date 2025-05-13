@@ -5,7 +5,7 @@ import 'package:url_launcher/url_launcher.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
 import 'package:logging/logging.dart';
 import 'package:file_picker/file_picker.dart';
-import 'package:simple_scanner/l10n/app_localizations.dart';
+import '/l10n/app_localizations.dart';
 
 class ResultScreen extends StatefulWidget {
   final String code;

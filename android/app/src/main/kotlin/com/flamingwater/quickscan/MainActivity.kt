@@ -1,4 +1,4 @@
-package com.flamingwater.simple_scanner
+package com.flamingwater.quickscan
 
 import io.flutter.embedding.android.FlutterActivity
 

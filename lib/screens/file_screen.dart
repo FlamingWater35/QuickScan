@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:mobile_scanner/mobile_scanner.dart';
 import 'package:logging/logging.dart';
-import 'package:simple_scanner/l10n/app_localizations.dart';
+import '/l10n/app_localizations.dart';
 
 import '/screens/scan_result_screen.dart';
 
@@ -17,7 +17,7 @@ class FileScreen extends StatefulWidget {
 class _FileScreenState extends State<FileScreen> {
   final _log = Logger('FileScannerScreenState');
   final MobileScannerController _scannerController = MobileScannerController(
-    // formats: [BarcodeFormat.qrCode],
+    formats: [BarcodeFormat.qrCode],
   );
   final ImagePicker _picker = ImagePicker();
   bool _isLoading = false;

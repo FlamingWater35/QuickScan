@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:logging/logging.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:simple_scanner/l10n/app_localizations.dart';
+import '/l10n/app_localizations.dart';
 
 import '../providers/providers.dart';
 import 'update_screen.dart';
