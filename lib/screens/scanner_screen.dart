@@ -40,6 +40,7 @@ class QRScannerScreenState extends State<QRScannerScreen> with WidgetsBindingObs
       formats: [BarcodeFormat.qrCode],
       detectionSpeed: DetectionSpeed.normal,
       returnImage: false,
+      autoStart: false,
     );
 
     WidgetsBinding.instance.addObserver(this);
@@ -456,14 +457,14 @@ class QRScannerScreenState extends State<QRScannerScreen> with WidgetsBindingObs
         final error = controller.value.error;
         _log.severe("QRScannerScreenState: controller.start() finished, but not running or has error (${error?.errorCode}, ${error?.errorDetails})");
         if (await WakelockPlus.enabled) await WakelockPlus.disable();
-          if (mounted && error != null) {
-            if (error.errorCode == MobileScannerErrorCode.permissionDenied) {
-              final currentSystemPermission = await Permission.camera.status;
-              if (mounted) setState(() => _cameraPermissionStatus = currentSystemPermission);
-              _showErrorSnackBar(l10n.cameraPermissionDeniedInSettings);
-            } else {
-              _showErrorSnackBar(l10n.cameraStartError(error.errorDetails?.message ?? error.errorCode.toString()));
-            }
+        if (mounted && error != null) {
+          if (error.errorCode == MobileScannerErrorCode.permissionDenied) {
+            final currentSystemPermission = await Permission.camera.status;
+            if (mounted) setState(() => _cameraPermissionStatus = currentSystemPermission);
+            _showErrorSnackBar(l10n.cameraPermissionDeniedInSettings);
+          } else {
+            _showErrorSnackBar(l10n.cameraStartError(error.errorDetails?.message ?? error.errorCode.toString()));
+          }
         } else if (mounted && !controller.value.isRunning) {
           _showErrorSnackBar(l10n.cameraGenericError);
         }
