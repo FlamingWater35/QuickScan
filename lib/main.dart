@@ -39,13 +39,6 @@ class MyApp extends ConsumerWidget {
 
     _runUpdateCleanup();
 
-    // Predictive back transitions for Android
-    // const pageTransitionsTheme = PageTransitionsTheme(
-    //   builders: <TargetPlatform, PageTransitionsBuilder>{
-    //     TargetPlatform.android: PredictiveBackPageTransitionsBuilder(),
-    //   },
-    // );
-
     SnackBarThemeData buildSnackBarTheme(ColorScheme colorScheme) {
       return SnackBarThemeData(
         behavior: SnackBarBehavior.floating,
@@ -90,7 +83,6 @@ class MyApp extends ConsumerWidget {
           seedColor: seedColor,
           brightness: Brightness.dark,
         )),
-        // pageTransitionsTheme: pageTransitionsTheme,
       ),
 
       darkTheme: ThemeData(
@@ -103,7 +95,6 @@ class MyApp extends ConsumerWidget {
           seedColor: seedColor,
           brightness: Brightness.light,
         )),
-        // pageTransitionsTheme: pageTransitionsTheme,
       ),
       
       themeMode: themeMode,

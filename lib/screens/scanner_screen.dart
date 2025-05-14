@@ -455,7 +455,7 @@ class QRScannerScreenState extends State<QRScannerScreen> with WidgetsBindingObs
             }
           }
         } else if (error != null && mounted) {
-          _showErrorSnackBar(l10n.cameraStartError(error.errorDetails?.toString() ?? error.errorCode.toString()));
+          _showErrorSnackBar(l10n.cameraStartError(error.errorDetails?.message ?? error.errorCode.toString()));
         } else if (!controller.value.isRunning && mounted) {
           _showErrorSnackBar(l10n.cameraGenericError);
         }
@@ -485,7 +485,7 @@ class QRScannerScreenState extends State<QRScannerScreen> with WidgetsBindingObs
             _showErrorSnackBar(l10n.cameraPermissionDeniedInSettings);
           }
         } else {
-          _showErrorSnackBar(l10n.cameraStartError(scannerException.errorDetails?.toString() ?? scannerException.errorCode.toString()));
+          _showErrorSnackBar(l10n.cameraStartError(scannerException.errorDetails?.message ?? scannerException.errorCode.toString()));
         }
       }
     } else if (genericException != null) {
@@ -765,9 +765,9 @@ class QRScannerScreenState extends State<QRScannerScreen> with WidgetsBindingObs
               } else if (error.errorCode == MobileScannerErrorCode.unsupported) {
                 errorMessage = l10n.cameraNotSupported;
               } else if (error.errorDetails != null) {
-                errorMessage = l10n.cameraStartError(error.errorDetails.toString());
+                errorMessage = l10n.cameraStartError(error.errorDetails?.message ?? error.errorCode.toString());
               } else {
-                errorMessage = l10n.cameraStartError(error.errorCode.toString());
+                errorMessage = l10n.cameraStartError(error.errorDetails?.message ?? error.errorCode.toString());
               }
 
               return _buildErrorWidget(errorMessage, showSettingsButtonForError);
