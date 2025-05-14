@@ -16,7 +16,6 @@ class MainScreen extends StatefulWidget {
 class _MainScreenState extends State<MainScreen> {
   final _log = Logger('MainScreenState');
   int _selectedIndex = 0;
-  int _previousIndex = 0;
 
   final GlobalKey<QRScannerScreenState> _qrScannerScreenKey = GlobalKey<QRScannerScreenState>();
   late final List<Widget> _widgetOptions;
@@ -39,46 +38,40 @@ class _MainScreenState extends State<MainScreen> {
         }
 
         if (_selectedIndex == 0) {
-          _log.fine("MainScreen initState: Initial screen is Camera, starting scanner AND enabling wakelock.");
+          _log.fine("MainScreen initState: Initial screen is Camera, attempting to start scanner.");
           qrScannerState.startCamera();
-          qrScannerState.enableKeepAwake();
         } else {
-          _log.fine("MainScreen initState: Initial screen is NOT Camera. Ensuring wakelock is off.");
-          qrScannerState.disableKeepAwake();
+          _log.fine("MainScreen initState: Initial screen is NOT Camera. Scanner should be stopped by default.");
         }
       }
     });
   }
 
   void _onItemTapped(int index) {
-    _previousIndex = _selectedIndex;
-    if (_previousIndex == index) return;
+    if (_selectedIndex == index) return;
 
     final qrScannerState = _qrScannerScreenKey.currentState;
-
-    if (qrScannerState == null) {
-      _log.warning("onItemTapped: QRScannerScreenState is null! Cannot control scanner/wakelock.");
-      setState(() { _selectedIndex = index; });
-      return;
-    }
-
-    _log.fine("MainScreen: Switched tab from $_previousIndex to $_selectedIndex");
-
-    if (_previousIndex == 0 && index != 0) {
-      _log.fine("MainScreen: Switched away from Camera Tab. Stopping scanner AND disabling wakelock.");
-      qrScannerState.stopCamera();
-      qrScannerState.disableKeepAwake();
-      qrScannerState.resetZoom();
-    }
-    else if (_previousIndex != 0 && index == 0) {
-      _log.fine("MainScreen: Switched to Camera Tab. Starting scanner AND enabling wakelock.");
-      qrScannerState.startCamera();
-      qrScannerState.enableKeepAwake();
-    }
+    final previousIndex = _selectedIndex;
 
     setState(() {
       _selectedIndex = index;
     });
+    
+    if (qrScannerState == null) {
+      _log.warning("onItemTapped: QRScannerScreenState is null! Cannot control scanner.");
+      return;
+    }
+
+    _log.fine("MainScreen: Switched tab from $previousIndex to $index");
+
+    if (previousIndex == 0 && index != 0) {
+      _log.fine("MainScreen: Switched away from Camera Tab. Stopping scanner.");
+      qrScannerState.stopCamera();
+    }
+    else if (previousIndex != 0 && index == 0) {
+      _log.fine("MainScreen: Switched to Camera Tab. Starting scanner.");
+      qrScannerState.startCamera();
+    }
   }
 
   @override
@@ -96,18 +89,18 @@ class _MainScreenState extends State<MainScreen> {
         labelBehavior: NavigationDestinationLabelBehavior.alwaysShow,
         destinations: <NavigationDestination>[
           NavigationDestination(
-            selectedIcon: Icon(Icons.qr_code),
-            icon: Icon(Icons.qr_code_scanner_outlined),
+            selectedIcon: const Icon(Icons.qr_code),
+            icon: const Icon(Icons.qr_code_scanner_outlined),
             label: l10n.scannerTabLabel,
           ),
           NavigationDestination(
-            selectedIcon: Icon(Icons.image),
-            icon: Icon(Icons.image_outlined),
+            selectedIcon: const Icon(Icons.image),
+            icon: const Icon(Icons.image_outlined),
             label: l10n.fileTabLabel,
           ),
           NavigationDestination(
-            selectedIcon: Icon(Icons.settings),
-            icon: Icon(Icons.settings_outlined),
+            selectedIcon: const Icon(Icons.settings),
+            icon: const Icon(Icons.settings_outlined),
             label: l10n.settingsTabLabel,
           ),
         ],
