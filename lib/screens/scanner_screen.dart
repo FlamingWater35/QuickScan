@@ -32,6 +32,7 @@ class QRScannerScreenState extends State<QRScannerScreen> with WidgetsBindingObs
   CameraFacing? _lastKnownCameraDirection;
 
   bool _isProcessingScannerStateChange = false;
+  bool _isControllerDisposedAndRecreating = false;
 
   @override
   void initState() {
@@ -51,6 +52,60 @@ class QRScannerScreenState extends State<QRScannerScreen> with WidgetsBindingObs
     });
     controller.addListener(_handleControllerStateChange);
     _log.fine("QRScannerScreenState initState completed.");
+  }
+
+  Future<void> _resetAndReinitializeController() async {
+    if (!mounted) {
+      _log.warning("Attempted to reset controller but widget unmounted.");
+      _isControllerDisposedAndRecreating = false; 
+      return;
+    }
+    if (_isControllerDisposedAndRecreating) {
+      _log.warning("Controller re-creation already in progress. Skipping.");
+      return;
+    }
+    _isControllerDisposedAndRecreating = true;
+    _log.warning("Attempting to fully reset and reinitialize MobileScannerController due to persistent error.");
+
+    controller.removeListener(_handleControllerStateChange);
+    _log.fine("Removed listener from old controller: ${controller.hashCode}");
+
+    await _pauseScanner(); 
+
+    _log.fine("Disposing old controller instance: ${controller.hashCode}");
+    try {
+      await controller.dispose();
+      _log.fine("Old controller disposed: ${controller.hashCode}");
+    } catch (e, s) {
+      _log.severe("Error disposing old controller: ${controller.hashCode}, $e", e, s);
+    }
+    
+    await Future.delayed(const Duration(milliseconds: 500));
+
+    if (!mounted) {
+      _log.warning("Component unmounted during controller re-creation delay. Aborting.");
+      _isControllerDisposedAndRecreating = false;
+      return;
+    }
+
+    setState(() {
+      controller = MobileScannerController(
+        formats: [BarcodeFormat.qrCode],
+        detectionSpeed: DetectionSpeed.normal,
+        returnImage: false,
+      );
+      _log.fine("New MobileScannerController instance created: ${controller.hashCode}");
+      controller.addListener(_handleControllerStateChange);
+      _log.fine("Listener added to new controller: ${controller.hashCode}");
+    });
+
+    _isCameraExplicitlyStopped = false; 
+    _isProcessingScannerStateChange = false; 
+
+    _isControllerDisposedAndRecreating = false; 
+    
+    _log.fine("Attempting to start the new controller via _checkPermissionAndInitialize.");
+    await _checkPermissionAndInitialize();
   }
 
   void _handleControllerStateChange() {
@@ -458,7 +513,13 @@ class QRScannerScreenState extends State<QRScannerScreen> with WidgetsBindingObs
         _log.severe("QRScannerScreenState: controller.start() finished, but not running or has error (${error?.errorCode}, ${error?.errorDetails})");
         if (await WakelockPlus.enabled) await WakelockPlus.disable();
         if (mounted && error != null) {
-          if (error.errorCode == MobileScannerErrorCode.permissionDenied) {
+          if (error.errorCode == MobileScannerErrorCode.controllerAlreadyInitialized ||
+            error.errorCode == MobileScannerErrorCode.genericError && (error.errorDetails?.message?.contains("There is already an instance MobileScannerState running") ?? false)) {
+            _log.warning("Detected critical error in controller.value.error after start. Scheduling controller reset.");
+            WidgetsBinding.instance.addPostFrameCallback((_) {
+              if (mounted && !_isControllerDisposedAndRecreating) _resetAndReinitializeController();
+            });
+          } else if (error.errorCode == MobileScannerErrorCode.permissionDenied) {
             final currentSystemPermission = await Permission.camera.status;
             if (mounted) setState(() => _cameraPermissionStatus = currentSystemPermission);
             _showErrorSnackBar(l10n.cameraPermissionDeniedInSettings);
@@ -473,7 +534,13 @@ class QRScannerScreenState extends State<QRScannerScreen> with WidgetsBindingObs
       _log.severe("MobileScannerException during start: ${e.errorCode} - ${e.errorDetails}", e, s);
       if (await WakelockPlus.enabled) await WakelockPlus.disable();
         if (mounted) {
-          if (e.errorCode == MobileScannerErrorCode.permissionDenied) {
+          if (e.errorCode == MobileScannerErrorCode.controllerAlreadyInitialized ||
+            e.errorCode == MobileScannerErrorCode.genericError && (e.errorDetails?.message?.contains("There is already an instance MobileScannerState running") ?? false)) {
+            _log.warning("Detected critical MobileScannerException. Scheduling controller reset.");
+            WidgetsBinding.instance.addPostFrameCallback((_) {
+              if (mounted && !_isControllerDisposedAndRecreating) _resetAndReinitializeController();
+            });
+          } else if (e.errorCode == MobileScannerErrorCode.permissionDenied) {
             final currentSystemPermission = await Permission.camera.status;
             if (mounted) setState(() => _cameraPermissionStatus = currentSystemPermission);
             _showErrorSnackBar(l10n.cameraPermissionDeniedInSettings);
@@ -484,7 +551,16 @@ class QRScannerScreenState extends State<QRScannerScreen> with WidgetsBindingObs
     } catch (e, s) {
       _log.severe("Generic error during controller.start(): $e", e, s);
       if (await WakelockPlus.enabled) await WakelockPlus.disable();
-      if (mounted) _showErrorSnackBar(l10n.cameraGenericError);
+      if (mounted) {
+        if (e.toString().toLowerCase().contains("already an instance") || e.toString().toLowerCase().contains("scanner was already started")) {
+          _log.warning("Detected critical string in generic error. Scheduling controller reset.");
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            if (mounted && !_isControllerDisposedAndRecreating) _resetAndReinitializeController();
+          });
+        } else {
+          _showErrorSnackBar(l10n.cameraGenericError);
+        }
+      }
     } finally {
       _isProcessingScannerStateChange = false;
       _log.fine("QRScannerScreen: Resume scanner processing finished (ProcessingFlag unset).");
