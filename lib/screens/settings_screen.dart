@@ -16,15 +16,9 @@ class SettingsScreen extends ConsumerStatefulWidget {
 }
 
 class _SettingsScreenState extends ConsumerState<SettingsScreen> {
-  final _log = Logger('SettingsScreen');
   String _appVersion = '';
   bool _isVersionLoaded = false;
-
-  @override
-  void initState() {
-    super.initState();
-    _log.fine("initState called");
-  }
+  final _log = Logger('SettingsScreen');
 
   @override
   void didChangeDependencies() {
@@ -33,6 +27,12 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
       _getAppVersion();
       _isVersionLoaded = true;
     }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _log.fine("initState called");
   }
 
   Future<void> _getAppVersion() async {

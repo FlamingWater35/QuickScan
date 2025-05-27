@@ -15,21 +15,15 @@ class UpdateScreen extends StatefulWidget {
 }
 
 class _UpdateScreenState extends State<UpdateScreen> {
+  String? _assetName;
+  String _currentVersion = '';
+  double _downloadProgress = 0.0;
+  String _errorMessage = '';
+  bool _isInitialUpdateChecked = false;
+  String _latestVersion = '';
   final _log = Logger('UpdateScreen');
   UpdateStatus _status = UpdateStatus.idle;
-  String _currentVersion = '';
-  String _latestVersion = '';
   String? _updateUrl;
-  String? _assetName;
-  String _errorMessage = '';
-  double _downloadProgress = 0.0;
-  bool _isInitialUpdateChecked = false;
-
-  @override
-  void initState() {
-    super.initState();
-    _log.fine("initState called");
-  }
 
   @override
   void didChangeDependencies() {
@@ -38,6 +32,12 @@ class _UpdateScreenState extends State<UpdateScreen> {
       _performUpdateCheck();
       _isInitialUpdateChecked = true;
     }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _log.fine("initState called");
   }
 
   Future<void> _performUpdateCheck() async {

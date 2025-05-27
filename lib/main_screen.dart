@@ -15,9 +15,8 @@ class MainScreen extends StatefulWidget {
 
 class _MainScreenState extends State<MainScreen> {
   final _log = Logger('MainScreenState');
-  int _selectedIndex = 0;
-
   final GlobalKey<QRScannerScreenState> _qrScannerScreenKey = GlobalKey<QRScannerScreenState>();
+  int _selectedIndex = 0;
   late final List<Widget> _widgetOptions;
 
   @override

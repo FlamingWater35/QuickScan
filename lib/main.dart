@@ -29,6 +29,7 @@ void _setupLogging() {
 
 class MyApp extends ConsumerWidget {
   const MyApp({super.key});
+
   static final _log = Logger('MyApp');
 
   @override

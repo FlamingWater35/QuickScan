@@ -15,13 +15,13 @@ class FileScreen extends StatefulWidget {
 }
 
 class _FileScreenState extends State<FileScreen> {
+  bool _isLoading = false;
+  String _loadingMessage = "";
   final _log = Logger('FileScannerScreenState');
+  final ImagePicker _picker = ImagePicker();
   final MobileScannerController _scannerController = MobileScannerController(
     formats: [BarcodeFormat.qrCode],
   );
-  final ImagePicker _picker = ImagePicker();
-  bool _isLoading = false;
-  String _loadingMessage = "";
 
   @override
   void dispose() {

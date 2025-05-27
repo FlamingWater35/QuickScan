@@ -10,13 +10,26 @@ final themeProvider = StateNotifierProvider<ThemeNotifier, ThemeMode>((ref) {
 });
 
 class ThemeNotifier extends StateNotifier<ThemeMode> {
-  final _log = Logger('ThemeNotifier');
-
-  final Future<SharedPreferences> _prefsFuture;
-  SharedPreferences? _prefs;
-
   ThemeNotifier(this._prefsFuture) : super(ThemeMode.system) {
     _loadThemePreference();
+  }
+
+  final _log = Logger('ThemeNotifier');
+  SharedPreferences? _prefs;
+  final Future<SharedPreferences> _prefsFuture;
+
+  Future<void> setThemeMode(ThemeMode mode) async {
+    if (state != mode) {
+      state = mode;
+      _log.info("Setting theme mode to: $mode");
+      try {
+        _prefs ??= await _prefsFuture;
+        await _prefs?.setString(_themePrefsKey, mode.name);
+        _log.info("Saved theme preference: $mode");
+      } catch (e, stackTrace) {
+        _log.severe("Error saving theme preference", e, stackTrace);
+      }
+    }
   }
 
   Future<void> _loadThemePreference() async {
@@ -42,20 +55,6 @@ class ThemeNotifier extends StateNotifier<ThemeMode> {
       _log.severe("Error loading theme preference", e, stackTrace);
     }
   }
-
-  Future<void> setThemeMode(ThemeMode mode) async {
-    if (state != mode) {
-      state = mode;
-      _log.info("Setting theme mode to: $mode");
-      try {
-        _prefs ??= await _prefsFuture;
-        await _prefs?.setString(_themePrefsKey, mode.name);
-        _log.info("Saved theme preference: $mode");
-      } catch (e, stackTrace) {
-        _log.severe("Error saving theme preference", e, stackTrace);
-      }
-    }
-  }
 }
 
 final localeProvider = StateNotifierProvider<LocaleNotifier, Locale>((ref) {
@@ -63,11 +62,22 @@ final localeProvider = StateNotifierProvider<LocaleNotifier, Locale>((ref) {
 });
 
 class LocaleNotifier extends StateNotifier<Locale> {
-  final _log = Logger('LocaleNotifier');
-  static const String _localeKey = 'selected_locale';
-  
   LocaleNotifier() : super(const Locale('en')) {
     _loadSavedLocale();
+  }
+
+  static const String _localeKey = 'selected_locale';
+
+  final _log = Logger('LocaleNotifier');
+
+  Future<void> setLocale(Locale locale) async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setString(_localeKey, locale.languageCode);
+      state = locale;
+    } catch (e) {
+      _log.severe('Error saving locale: $e');
+    }
   }
 
   Future<void> _loadSavedLocale() async {
@@ -81,16 +91,6 @@ class LocaleNotifier extends StateNotifier<Locale> {
     } catch (e) {
       state = const Locale('en');
       _log.severe("Fallback to default locale");
-    }
-  }
-
-  Future<void> setLocale(Locale locale) async {
-    try {
-      final prefs = await SharedPreferences.getInstance();
-      await prefs.setString(_localeKey, locale.languageCode);
-      state = locale;
-    } catch (e) {
-      _log.severe('Error saving locale: $e');
     }
   }
 }

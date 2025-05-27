@@ -8,26 +8,26 @@ import 'package:file_picker/file_picker.dart';
 import '/l10n/app_localizations.dart';
 
 class ResultScreen extends StatefulWidget {
-  final String code;
-  final BarcodeType type;
-
   const ResultScreen({
     super.key,
     required this.code,
     required this.type,
   });
 
+  final String code;
+  final BarcodeType type;
+
   @override
   State<ResultScreen> createState() => _ResultScreenState();
 }
 
 class _ResultScreenState extends State<ResultScreen> {
-  final _log = Logger('ScannerResultsScreenState');
+  bool _isWifiPasswordVisible = false;
   Uri? _launchableUri;
-  Map<String, String>? _wifiCredentials;
+  final _log = Logger('ScannerResultsScreenState');
   Map<String, String?> _parsedUriParams = {};
   Map<String, List<String>> _parsedVCard = {};
-  bool _isWifiPasswordVisible = false;
+  Map<String, String>? _wifiCredentials;
 
   @override
   void initState() {
