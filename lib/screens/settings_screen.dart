@@ -37,15 +37,12 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
 
   Future<void> _getAppVersion() async {
     final l10n = AppLocalizations.of(context);
-    
+
     try {
       final PackageInfo info = await PackageInfo.fromPlatform();
       if (mounted) {
         setState(() {
-          _appVersion = l10n.versionFormat(
-            info.version,
-            info.buildNumber,
-          );
+          _appVersion = l10n.versionFormat(info.version, info.buildNumber);
         });
         _log.info("App version loaded: $_appVersion");
       }
@@ -108,7 +105,12 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
     }
   }
 
-  void _showLanguageSelectionSheet(BuildContext context, Locale currentLocale, AppLocalizations l10n, WidgetRef ref) {
+  void _showLanguageSelectionSheet(
+    BuildContext context,
+    Locale currentLocale,
+    AppLocalizations l10n,
+    WidgetRef ref,
+  ) {
     final supportedLocales = AppLocalizations.supportedLocales;
     final theme = Theme.of(context);
 
@@ -128,7 +130,9 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
 
             void handleLocaleSelection(Locale? newLocale) {
               if (newLocale != null && newLocale != currentLocaleInSheet) {
-                _log.info("Language selected in sheet: ${newLocale.languageCode}");
+                _log.info(
+                  "Language selected in sheet: ${newLocale.languageCode}",
+                );
                 ref.read(localeProvider.notifier).setLocale(newLocale);
                 Navigator.pop(bottomSheetContext);
               }
@@ -136,12 +140,18 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
 
             return SafeArea(
               child: Padding(
-                padding: const EdgeInsets.symmetric(vertical: 16.0, horizontal: 8.0),
+                padding: const EdgeInsets.symmetric(
+                  vertical: 16.0,
+                  horizontal: 8.0,
+                ),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
                     Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 16.0,
+                        vertical: 8.0,
+                      ),
                       child: Text(
                         l10n.languageSectionTitle,
                         style: theme.textTheme.titleLarge?.copyWith(
@@ -166,25 +176,32 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                           color: Colors.transparent,
                           child: ListView(
                             padding: EdgeInsets.zero,
-                            children: supportedLocales.map((locale) {
-                              final languageName = _getLanguageName(locale, l10n);
-                              final bool isSelected = locale == currentLocaleInSheet;
+                            children:
+                                supportedLocales.map((locale) {
+                                  final languageName = _getLanguageName(
+                                    locale,
+                                    l10n,
+                                  );
+                                  final bool isSelected =
+                                      locale == currentLocaleInSheet;
 
-                              return ListTile(
-                                title: Text(languageName),
-                                leading: Radio<Locale>(
-                                  value: locale,
-                                  groupValue: currentLocaleInSheet,
-                                  onChanged: handleLocaleSelection,
-                                  activeColor: theme.colorScheme.primary,
-                                  visualDensity: VisualDensity.compact,
-                                ),
-                                selected: isSelected,
-                                contentPadding: const EdgeInsets.symmetric(horizontal: 16.0),
-                                visualDensity: VisualDensity.compact,
-                                onTap: () => handleLocaleSelection(locale),
-                              );
-                            }).toList(),
+                                  return ListTile(
+                                    title: Text(languageName),
+                                    leading: Radio<Locale>(
+                                      value: locale,
+                                      groupValue: currentLocaleInSheet,
+                                      onChanged: handleLocaleSelection,
+                                      activeColor: theme.colorScheme.primary,
+                                      visualDensity: VisualDensity.compact,
+                                    ),
+                                    selected: isSelected,
+                                    contentPadding: const EdgeInsets.symmetric(
+                                      horizontal: 16.0,
+                                    ),
+                                    visualDensity: VisualDensity.compact,
+                                    onTap: () => handleLocaleSelection(locale),
+                                  );
+                                }).toList(),
                           ),
                         ),
                       ),
@@ -193,7 +210,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                 ),
               ),
             );
-          }
+          },
         );
       },
     );
@@ -226,47 +243,81 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                 padding: const EdgeInsets.symmetric(vertical: 8.0),
                 children: <Widget>[
                   Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
-                    child: Text(l10n.languageSectionTitle, style: theme.textTheme.titleMedium?.copyWith(color: theme.colorScheme.primary)),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 16.0,
+                      vertical: 8.0,
+                    ),
+                    child: Text(
+                      l10n.languageSectionTitle,
+                      style: theme.textTheme.titleMedium?.copyWith(
+                        color: theme.colorScheme.primary,
+                      ),
+                    ),
                   ),
                   Padding(
                     padding: const EdgeInsets.fromLTRB(16.0, 0.0, 16.0, 0.0),
                     child: ListTile(
-                      leading: Icon(Icons.language_outlined, color: theme.colorScheme.secondary),
+                      leading: Icon(
+                        Icons.language_outlined,
+                        color: theme.colorScheme.secondary,
+                      ),
                       title: Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 10.0),
-                        child: Text(l10n.languageSectionTitle)
+                        child: Text(l10n.languageSectionTitle),
                       ),
                       subtitle: Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 10.0),
                         child: Text(
                           _getLanguageName(currentLocale, l10n),
-                          style: TextStyle(color: theme.textTheme.bodySmall?.color?.withAlpha(200)),
+                          style: TextStyle(
+                            color: theme.textTheme.bodySmall?.color?.withAlpha(
+                              200,
+                            ),
+                          ),
                         ),
                       ),
                       trailing: const Icon(Icons.arrow_drop_down),
-                      contentPadding: const EdgeInsets.symmetric(horizontal: 16.0),
+                      contentPadding: const EdgeInsets.symmetric(
+                        horizontal: 16.0,
+                      ),
                       onTap: () {
-                        _log.info("Language setting tapped - showing selection sheet");
-                        _showLanguageSelectionSheet(context, currentLocale, l10n, ref);
+                        _log.info(
+                          "Language setting tapped - showing selection sheet",
+                        );
+                        _showLanguageSelectionSheet(
+                          context,
+                          currentLocale,
+                          l10n,
+                          ref,
+                        );
                       },
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(8.0),
-                        side: BorderSide(color: theme.dividerColor, width: 0.5)
+                        side: BorderSide(color: theme.dividerColor, width: 0.5),
                       ),
                       horizontalTitleGap: 8.0,
-                      tileColor: theme.colorScheme.surfaceContainerHighest.withAlpha(64),
+                      tileColor: theme.colorScheme.surfaceContainerHighest
+                          .withAlpha(64),
                     ),
                   ),
                   const SizedBox(height: 8),
                   const Divider(indent: 16, endIndent: 16, height: 24),
 
                   Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
-                    child: Text(l10n.appearanceSectionTitle, style: theme.textTheme.titleSmall),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 16.0,
+                      vertical: 8.0,
+                    ),
+                    child: Text(
+                      l10n.appearanceSectionTitle,
+                      style: theme.textTheme.titleSmall,
+                    ),
                   ),
                   Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 4.0),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 16.0,
+                      vertical: 4.0,
+                    ),
                     child: SegmentedButton<ThemeMode>(
                       selected: {currentMode},
                       segments: <ButtonSegment<ThemeMode>>[
@@ -289,8 +340,12 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
 
                       onSelectionChanged: (Set<ThemeMode> newSelection) {
                         if (newSelection.isNotEmpty) {
-                          _log.info("Theme mode changed to: ${newSelection.first}");
-                          ref.read(themeProvider.notifier).setThemeMode(newSelection.first);
+                          _log.info(
+                            "Theme mode changed to: ${newSelection.first}",
+                          );
+                          ref
+                              .read(themeProvider.notifier)
+                              .setThemeMode(newSelection.first);
                         }
                       },
                       showSelectedIcon: false,
@@ -300,14 +355,22 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                   const Divider(indent: 16, endIndent: 16, height: 24),
 
                   Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
-                    child: Text(l10n.applicationSectionTitle, style: theme.textTheme.titleSmall),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 16.0,
+                      vertical: 8.0,
+                    ),
+                    child: Text(
+                      l10n.applicationSectionTitle,
+                      style: theme.textTheme.titleSmall,
+                    ),
                   ),
                   ListTile(
                     leading: const Icon(Icons.system_update_alt_outlined),
                     title: Text(l10n.checkForUpdatesLabel),
                     onTap: _handleCheckForUpdates,
-                    contentPadding: const EdgeInsets.symmetric(horizontal: 16.0),
+                    contentPadding: const EdgeInsets.symmetric(
+                      horizontal: 16.0,
+                    ),
                   ),
                 ],
               ),

@@ -47,7 +47,9 @@ class _FileScreenState extends State<FileScreen> {
 
       if (pickedFile == null) {
         if (mounted) {
-          setState(() { _isLoading = false; });
+          setState(() {
+            _isLoading = false;
+          });
         }
         return;
       }
@@ -64,7 +66,9 @@ class _FileScreenState extends State<FileScreen> {
       setState(() {
         _loadingMessage = l10n.scanningImageMessage;
       });
-      final BarcodeCapture? capture = await _scannerController.analyzeImage(pickedFile.path);
+      final BarcodeCapture? capture = await _scannerController.analyzeImage(
+        pickedFile.path,
+      );
 
       if (!mounted) return;
 
@@ -103,9 +107,9 @@ class _FileScreenState extends State<FileScreen> {
 
   void _showSnackBar(String message) {
     if (!mounted) return;
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text(message)),
-    );
+    ScaffoldMessenger.of(
+      context,
+    ).showSnackBar(SnackBar(content: Text(message)));
   }
 
   @override
@@ -113,9 +117,7 @@ class _FileScreenState extends State<FileScreen> {
     final l10n = AppLocalizations.of(context);
 
     return Scaffold(
-      appBar: AppBar(
-        title: Text(l10n.fileScreenTitle),
-      ),
+      appBar: AppBar(title: Text(l10n.fileScreenTitle)),
       body: Center(
         child: Padding(
           padding: const EdgeInsets.all(20.0),
@@ -140,11 +142,17 @@ class _FileScreenState extends State<FileScreen> {
                   children: [
                     ElevatedButton.icon(
                       icon: const Icon(Icons.image_search),
-                      label: Text(l10n.pickImageButtonText, textAlign: TextAlign.center),
+                      label: Text(
+                        l10n.pickImageButtonText,
+                        textAlign: TextAlign.center,
+                      ),
                       onPressed: _isLoading ? null : _pickAndScanImage,
                       style: ElevatedButton.styleFrom(
-                        padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 15),
-                        textStyle: const TextStyle(fontSize: 16)
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 30,
+                          vertical: 15,
+                        ),
+                        textStyle: const TextStyle(fontSize: 16),
                       ),
                     ),
                     const SizedBox(height: 20),

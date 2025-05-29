@@ -15,7 +15,8 @@ class MainScreen extends StatefulWidget {
 
 class _MainScreenState extends State<MainScreen> {
   final _log = Logger('MainScreenState');
-  final GlobalKey<QRScannerScreenState> _qrScannerScreenKey = GlobalKey<QRScannerScreenState>();
+  final GlobalKey<QRScannerScreenState> _qrScannerScreenKey =
+      GlobalKey<QRScannerScreenState>();
   int _selectedIndex = 0;
   late final List<Widget> _widgetOptions;
 
@@ -37,10 +38,14 @@ class _MainScreenState extends State<MainScreen> {
         }
 
         if (_selectedIndex == 0) {
-          _log.fine("MainScreen initState: Initial screen is Camera, attempting to start scanner.");
+          _log.fine(
+            "MainScreen initState: Initial screen is Camera, attempting to start scanner.",
+          );
           qrScannerState.startCamera();
         } else {
-          _log.fine("MainScreen initState: Initial screen is NOT Camera. Scanner should be stopped by default.");
+          _log.fine(
+            "MainScreen initState: Initial screen is NOT Camera. Scanner should be stopped by default.",
+          );
         }
       }
     });
@@ -55,9 +60,11 @@ class _MainScreenState extends State<MainScreen> {
     setState(() {
       _selectedIndex = index;
     });
-    
+
     if (qrScannerState == null) {
-      _log.warning("onItemTapped: QRScannerScreenState is null! Cannot control scanner.");
+      _log.warning(
+        "onItemTapped: QRScannerScreenState is null! Cannot control scanner.",
+      );
       return;
     }
 
@@ -66,8 +73,7 @@ class _MainScreenState extends State<MainScreen> {
     if (previousIndex == 0 && index != 0) {
       _log.fine("MainScreen: Switched away from Camera Tab. Stopping scanner.");
       qrScannerState.stopCamera();
-    }
-    else if (previousIndex != 0 && index == 0) {
+    } else if (previousIndex != 0 && index == 0) {
       _log.fine("MainScreen: Switched to Camera Tab. Starting scanner.");
       qrScannerState.startCamera();
     }
@@ -78,10 +84,7 @@ class _MainScreenState extends State<MainScreen> {
     final l10n = AppLocalizations.of(context);
 
     return Scaffold(
-      body: IndexedStack(
-        index: _selectedIndex,
-        children: _widgetOptions,
-      ),
+      body: IndexedStack(index: _selectedIndex, children: _widgetOptions),
       bottomNavigationBar: NavigationBar(
         selectedIndex: _selectedIndex,
         onDestinationSelected: _onItemTapped,

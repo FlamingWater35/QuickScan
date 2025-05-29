@@ -84,7 +84,7 @@ class LocaleNotifier extends StateNotifier<Locale> {
     try {
       final prefs = await SharedPreferences.getInstance();
       final languageCode = prefs.getString(_localeKey);
-      
+
       if (languageCode != null && languageCode.isNotEmpty) {
         state = Locale(languageCode);
       }
