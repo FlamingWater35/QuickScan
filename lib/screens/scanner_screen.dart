@@ -156,8 +156,9 @@ class QRScannerScreenState extends State<QRScannerScreen>
       if (currentStatus.isDenied) {
         await _requestPermission();
         final statusAfterRequest = await Permission.camera.status;
-        if (mounted)
+        if (mounted) {
           setState(() => _cameraPermissionStatus = statusAfterRequest);
+        }
         if (statusAfterRequest != PermissionStatus.granted) {
           _log.severe(
             "Permission denied after re-request in startCamera. Aborting start.",
@@ -178,10 +179,11 @@ class QRScannerScreenState extends State<QRScannerScreen>
         "startCamera: Already running and not processing. Ensuring listener and wakelock.",
       );
       if (mounted) _listenForBarcodes();
-      if (mounted && !await WakelockPlus.enabled)
+      if (mounted && !await WakelockPlus.enabled) {
         await WakelockPlus.enable().catchError(
           (e, s) => _log.severe("Wakelock enable error", e, s),
         );
+      }
       return;
     }
     await _resumeScanner();
@@ -207,8 +209,9 @@ class QRScannerScreenState extends State<QRScannerScreen>
   void resetZoom() {
     if (!mounted ||
         !controller.value.isInitialized ||
-        !controller.value.isRunning)
+        !controller.value.isRunning) {
       return;
+    }
     try {
       controller.resetZoomScale();
       if (mounted) {
@@ -624,17 +627,19 @@ class QRScannerScreenState extends State<QRScannerScreen>
       _log.warning(
         "_resumeScanner: Aborting (navigating:$_isNavigating, explicitStop:$_isCameraExplicitlyStopped).",
       );
-      if (_isCameraExplicitlyStopped && await WakelockPlus.enabled)
+      if (_isCameraExplicitlyStopped && await WakelockPlus.enabled) {
         await WakelockPlus.disable();
+      }
       return;
     }
 
     if (controller.value.isRunning) {
       _log.fine("Scanner already running. Ensuring listener and wakelock.");
-      if (!await WakelockPlus.enabled)
+      if (!await WakelockPlus.enabled) {
         await WakelockPlus.enable().catchError(
           (e, s) => _log.severe("Wakelock enable error", e, s),
         );
+      }
       _listenForBarcodes();
       return;
     }
@@ -690,14 +695,16 @@ class QRScannerScreenState extends State<QRScannerScreen>
               "Detected critical error in controller.value.error after start. Scheduling controller reset.",
             );
             WidgetsBinding.instance.addPostFrameCallback((_) {
-              if (mounted && !_isControllerDisposedAndRecreating)
+              if (mounted && !_isControllerDisposedAndRecreating) {
                 _resetAndReinitializeController();
+              }
             });
           } else if (error.errorCode ==
               MobileScannerErrorCode.permissionDenied) {
             final currentSystemPermission = await Permission.camera.status;
-            if (mounted)
+            if (mounted) {
               setState(() => _cameraPermissionStatus = currentSystemPermission);
+            }
             _showErrorSnackBar(l10n.cameraPermissionDeniedInSettings);
           } else {
             _showErrorSnackBar(
@@ -729,13 +736,15 @@ class QRScannerScreenState extends State<QRScannerScreen>
             "Detected critical MobileScannerException. Scheduling controller reset.",
           );
           WidgetsBinding.instance.addPostFrameCallback((_) {
-            if (mounted && !_isControllerDisposedAndRecreating)
+            if (mounted && !_isControllerDisposedAndRecreating) {
               _resetAndReinitializeController();
+            }
           });
         } else if (e.errorCode == MobileScannerErrorCode.permissionDenied) {
           final currentSystemPermission = await Permission.camera.status;
-          if (mounted)
+          if (mounted) {
             setState(() => _cameraPermissionStatus = currentSystemPermission);
+          }
           _showErrorSnackBar(l10n.cameraPermissionDeniedInSettings);
         } else {
           _showErrorSnackBar(
@@ -757,8 +766,9 @@ class QRScannerScreenState extends State<QRScannerScreen>
             "Detected critical string in generic error. Scheduling controller reset.",
           );
           WidgetsBinding.instance.addPostFrameCallback((_) {
-            if (mounted && !_isControllerDisposedAndRecreating)
+            if (mounted && !_isControllerDisposedAndRecreating) {
               _resetAndReinitializeController();
+            }
           });
         } else {
           _showErrorSnackBar(l10n.cameraGenericError);
@@ -783,8 +793,9 @@ class QRScannerScreenState extends State<QRScannerScreen>
   void _setZoom(double value) {
     if (!mounted ||
         !controller.value.isInitialized ||
-        !controller.value.isRunning)
+        !controller.value.isRunning) {
       return;
+    }
     try {
       controller.setZoomScale(value);
     } catch (e, s) {
@@ -1161,8 +1172,9 @@ class QRScannerScreenState extends State<QRScannerScreen>
                     onTorchPressed =
                         () => controller.toggleTorch().catchError((e) {
                           _log.severe("Error toggling torch: $e");
-                          if (mounted)
+                          if (mounted) {
                             _showErrorSnackBar(l10n.couldNotToggleFlash);
+                          }
                         });
                     break;
                   case TorchState.on:
@@ -1172,8 +1184,9 @@ class QRScannerScreenState extends State<QRScannerScreen>
                     onTorchPressed =
                         () => controller.toggleTorch().catchError((e) {
                           _log.severe("Error toggling torch: $e");
-                          if (mounted)
+                          if (mounted) {
                             _showErrorSnackBar(l10n.couldNotToggleFlash);
+                          }
                         });
                     break;
                   case TorchState.auto:
@@ -1208,8 +1221,9 @@ class QRScannerScreenState extends State<QRScannerScreen>
                   onPressed:
                       () => controller.switchCamera().catchError((e) {
                         _log.severe("Error switching camera: $e");
-                        if (mounted)
+                        if (mounted) {
                           _showErrorSnackBar(l10n.couldNotSwitchCamera);
+                        }
                       }),
                 );
               },
